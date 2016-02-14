@@ -28,27 +28,27 @@ const int32_t msgSerialLengthArr[] = { 0x00, // NO_MSG
  *  @return:
  *
  ****************************************************************/
-int32_t SendSerialProtocolMsg(int8_t * msg) {
+int32_t SendSerialProtocolMsg(char * msg) {
     int32_t ret = UDebugPrintf(msg);
 
     return ret;
 }
 int32_t SendSerialACK(int8_t msgID, int32_t length) {
-    int8_t msg[32];
+    char msg[32];
 
     sprintf((char*)msg,  "%d|%d||ACK\r\n", msgID, (int)length);
     int32_t ret = SendSerialProtocolMsg(msg);
     return ret;
 }
 int32_t SendSerialNACK(int8_t msgID, int32_t length) {
-    int8_t msg[32];
+    char msg[32];
 
     sprintf((char*)msg, "%d|%d|NACK\r\n", msgID, (int)length);
     int32_t ret = SendSerialProtocolMsg(msg);
     return ret;
 }
 int32_t SendSerialVersion() {
-    int8_t msg[32];
+    char msg[32];
 
     sprintf((char*)msg, "%d|%d|%s|%s\r\n", (int)msgSerialIDArr[VERSION_QUERY],
     		(int)msgSerialLengthArr[VERSION_QUERY], PROJECT_NAME,
@@ -66,7 +66,7 @@ int32_t SendSerialVersion() {
  *  @return: msgID corresponding with the processed msg
  *
  ****************************************************************/
-int32_t MarshallSerialMsg(int8_t * msg, int32_t length) {
+int32_t MarshallSerialMsg(char * msg, int32_t length) {
     int32_t i = 0;
 
     for (i = 1; i < NUMBER_SERIAL_MSG_TYPE; i++) {
@@ -93,7 +93,7 @@ int32_t MarshallSerialMsg(int8_t * msg, int32_t length) {
  *  @return:
  *
  ****************************************************************/
-int32_t SerialMsgHandleController(int8_t * msg, int32_t length) {
+int32_t SerialMsgHandleController(char * msg, int32_t length) {
     int32_t msgType = MarshallSerialMsg(msg, length);
 
     switch (msgType) {
