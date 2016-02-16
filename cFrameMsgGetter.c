@@ -38,7 +38,7 @@ void FrameMsgGetterInitialize(){
  *  @return: then length of the frameMsg
  *
  ****************************************************************/
-int32_t FrameMsgGetter(int8_t inputChar, int8_t * outputMsg){
+int32_t FrameMsgGetter(char inputChar, char * outputMsg){
     static int32_t msgLength = 0;
     int8_t ch = inputChar;
 

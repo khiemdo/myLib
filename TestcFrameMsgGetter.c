@@ -8,16 +8,16 @@ FILENUM(4);
 #include <stdint.h>
 #include <string.h>
 
-int8_t msgStr[10];
+char msgStr[10];
 
 void TestcFrameMsgGetterConfig() {
 	FrameMsgGetterInitialize();
 }
 void TestcFrameMsgGetter() {
 	int8_t ch = ReadDebugUart();
-	int32_t msgLength = FrameMsgGetter(ch, (int8_t*) msgStr);
+	int32_t msgLength = FrameMsgGetter(ch, msgStr);
 
 	if (msgLength != 0) {
-		UDebugPrintf((int8_t*) "get cmd: %s\r\n", msgStr);
+		UDebugPrintf("get cmd: %s\r\n", msgStr);
 	}
 }
