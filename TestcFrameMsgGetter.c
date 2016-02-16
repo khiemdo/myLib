@@ -15,7 +15,7 @@ void TestcFrameMsgGetterConfig() {
 }
 void TestcFrameMsgGetter() {
 	int8_t ch = ReadDebugUart();
-	int32_t msgLength = FrameMsgGetter(ch, msgStr);
+	int32_t msgLength = FrameMsgGetter((char)ch, msgStr);
 
 	if (msgLength != 0) {
 		UDebugPrintf("get cmd: %s\r\n", msgStr);
