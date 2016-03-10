@@ -28,7 +28,7 @@ extern "C" {
 #include <stdint.h>
 
 void FrameMsgGetterInitialize(void);
-int32_t FrameMsgGetter(int8_t inputChar, int8_t * outputStrCmd);
+int32_t FrameMsgGetter(char inputChar, char * outputStrCmd);
 
 #ifdef __cplusplus
 }

@@ -32,8 +32,8 @@ int32_t SendSerialACK(int8_t msgID, int32_t length);
 int32_t SendSerialNACK(int8_t msgID, int32_t length);
 int32_t SendSerialVersion(void);
 int32_t SendSerialExample(void);
-int32_t MarshallSerialMsg(int8_t * msg, int32_t length);
-int32_t SerialMsgHandleController(int8_t * msg, int32_t length);
+int32_t MarshallSerialMsg(char * msg, int32_t length);
+int32_t SerialMsgHandleController(char * msg, int32_t length);
 
 #ifdef __cplusplus
 }
