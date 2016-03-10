@@ -42,7 +42,7 @@ void PushRingBuffer(RingBuffer* me, void* item) {
 	}
 
 }
-int PopRingBuffer(RingBuffer* me, void *item) {
+int32_t PopRingBuffer(RingBuffer* me, void *item) {
 	if (!me->active) {
 		return -1;
 	}
@@ -77,16 +77,16 @@ void * GetNextItemPtr(RingBuffer* me, void* currentPtr) {
 	return tempPtr;
 }
 
-int GetNumberItemLeftOfRBuffer(RingBuffer* me) {
+int32_t GetNumberItemLeftOfRBuffer(RingBuffer* me) {
 	return (me->bufferSize - me->active) / me->itemSize;
 }
-int GetNumberItemUsedOfRBuffer(RingBuffer* me) {
+int32_t GetNumberItemUsedOfRBuffer(RingBuffer* me) {
 	return me->active / me->itemSize;
 }
-int GetNumberByteLeftOfRBuffer(RingBuffer* me) {
+int32_t GetNumberByteLeftOfRBuffer(RingBuffer* me) {
 	return me->bufferSize - me->active;
 }
-int GetNumberByteUsedOfRBuffer(RingBuffer* me) {
+int32_t GetNumberByteUsedOfRBuffer(RingBuffer* me) {
 	return me->active;
 }
 void FlushRingBuffer(RingBuffer* me) {

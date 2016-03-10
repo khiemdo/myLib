@@ -41,7 +41,7 @@ void TPrinfFloat() {
 void TSimplePrintf(){
 	uint32_t currentTime = HAL_GetTick();
 	char msg[100]={0};
-	sprintf(msg,"hello-%d\r\n",currentTime);
+	sprintf(msg,"hello-%d\r\n",(int)currentTime);
 	UDebugSimplePrintf((int8_t*)msg, strlen(msg));//fail the test of fast print
 }
 void TSimplePrintfInBurst(){
@@ -50,19 +50,19 @@ void TSimplePrintfInBurst(){
 	uint16_t deltaTime = currentTime - lastTime;
 	if(deltaTime>1000){
 		char msg[100]={0};
-		sprintf(msg,"hello%d\r\n",HAL_GetTick());
+		sprintf(msg,"hello%d\r\n",(int)HAL_GetTick());
 		UDebugSimplePrintf((int8_t*)msg, strlen(msg));
 		memset(msg,0,100);
-		sprintf(msg,"DB:0:hello%d\r\n",HAL_GetTick());
+		sprintf(msg,"DB:0:hello%d\r\n",(int)HAL_GetTick());
 		UDebugSimplePrintf((int8_t*)msg, strlen(msg));
 		memset(msg,0,100);
-		sprintf(msg,"DB:0:hello%d\r\n",HAL_GetTick());
+		sprintf(msg,"DB:0:hello%d\r\n",(int)HAL_GetTick());
 		UDebugSimplePrintf((int8_t*)msg, strlen(msg));
 		memset(msg,0,100);
-		sprintf(msg,"DB:0:hello%d\r\n",HAL_GetTick());
+		sprintf(msg,"DB:0:hello%d\r\n",(int)HAL_GetTick());
 		UDebugSimplePrintf((int8_t*)msg, strlen(msg));
 		memset(msg,0,100);
-		sprintf(msg,"DB:0:hello%d\r\n",HAL_GetTick());
+		sprintf(msg,"DB:0:hello%d\r\n",(int)HAL_GetTick());
 		UDebugSimplePrintf((int8_t*)msg, strlen(msg));
 		lastTime = currentTime;
 	}

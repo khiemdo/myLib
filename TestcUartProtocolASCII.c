@@ -16,7 +16,7 @@ void TestcUartProtocolAsciiConfig(){
 void TestcUartProtocolAscii(){
     char msgStr[10];
     int8_t ch = ReadDebugUart();
-    int32_t msgLength = FrameMsgGetter(ch, msgStr);
+    int32_t msgLength = FrameMsgGetter((char)ch, msgStr);
 
     if (msgLength != 0) {
         int32_t msgType = SerialMsgHandleController(msgStr, msgLength);

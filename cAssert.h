@@ -36,7 +36,7 @@ extern "C" {
 #define REQUIRE(test_)         my_assert_param(test_)         // PRECONDITION#define ENSURE(test_)          my_assert_param(test_)                 // CONDITIONS MAY MEET, BUT NEED TO ENSURE#define INVARIANT(test_)       my_assert_param(test_)         // MUST BE ALWAYS TRUE#define ERROR(test_)           my_assert_param(test_)                 // IF IT HAS ANY ERROR#define ALLEGE(test_)          my_assert_param(test_)                 // THIS CASE NOT ALLOW TO HAPPEN PRACTICALLY#endif /* USE_FULL_ASSERT */
 
 #ifdef  USE_MY_ASSERT
-#define my_assert_param(expr)  ((expr) ? (void)0 : my_assert_failed((uint8_t *)__FILE__, __LINE__, F_NUM, (int8_t *)#expr))
+#define my_assert_param(expr)  ((expr) ? (void)0 : my_assert_failed((uint8_t *)__FILE__, __LINE__, 0, (int8_t *)#expr))
 void my_assert_failed(uint8_t * file, uint32_t line, uint32_t fileIndex,
 		int8_t * expression);
 ///@ref:http://www.barrgroup.com/Embedded-Systems/How-To/Use-Assert-Macro
@@ -49,10 +49,10 @@ void my_assert_failed(uint8_t * file, uint32_t line, uint32_t fileIndex,
 #ifdef DEBUGON
 #define DEBUG(level, fmt, ...) \
     if (DEBUGLV >= level) { \
-        DebugLogHandle((int8_t*)"DB:%d:", level); \
-        DebugLogHandle((int8_t*)fmt, __VA_ARGS__); \
+        DebugLogHandle("DB:%d:", level); \
+        DebugLogHandle(fmt, __VA_ARGS__); \
     }
-void DebugLogHandle(int8_t * msg, ...);
+void DebugLogHandle(char * msg, ...);
 #else
 #define DEBUG(level, fmt, ...) ((void)0)
 #endif
