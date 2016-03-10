@@ -13,11 +13,10 @@ void TPrinf() {
     uint32_t currentTime = HAL_GetTick();
     uint32_t deltaTime = currentTime - lastTime;
 
-    if (deltaTime > 1) {
-        UDebugPrintf((int8_t*)"helloKhiem1helloKhiem2helloKhiem3\r\n");
+    if (deltaTime > 1000) {
+        UDebugPrintf("helloKhiem1helloKhiem2helloKhiem3\r\n");
         lastTime = currentTime;
     }
-    UARTDebug_TBuffControllerLoop(GetUartDebugPtr());
 }
 
 void TPrinfFloat() {
@@ -27,7 +26,7 @@ void TPrinfFloat() {
     if (displayNum == 0) {
         displayNum = 1000.0;
     }
-    UDebugPrintf((int8_t*)"current Number = %.2f", displayNum);
+    UDebugPrintf("current Number = %.2f", displayNum);
 }
 
 void TPrinfRbuffAssync() {
@@ -46,7 +45,7 @@ void TPrinfRbuffAssync() {
     }
 
     if (oneSecEvent == 1) {
-        UDebugPrintf((int8_t*)"helloKhiem1helloKhiem2helloKhiem3\r\n");
+        UDebugPrintf("helloKhiem1helloKhiem2helloKhiem3\r\n");
         count--;
         if (count == 0) {
             count = countCONST;
@@ -60,5 +59,5 @@ void TcUartMirroInputNOutput(void) {
     int8_t ret = ReadDebugUart();
 
     if (ret != '\0')
-        UDebugPrintf((int8_t*)"%c", ret);
+        UDebugPrintf("%c", ret);
 }
