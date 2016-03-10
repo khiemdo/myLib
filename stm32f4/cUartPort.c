@@ -8,7 +8,7 @@
  *  @note
  *
  ****************************************************************/
- #include "main.h"
+#include "main.h"
 FILENUM(11);
 
 #include "cUartPort.h"
@@ -22,7 +22,8 @@ FILENUM(11);
  *  @details: used in Uart3Debug_Init
  ****************************************************************/
 void Uart3GPIOInit(void) {
-	__GPIOB_CLK_ENABLE();
+	__GPIOB_CLK_ENABLE()
+	;
 	GPIO_InitTypeDef GPIO_InitStruct;
 	GPIO_InitStruct.Pin = GPIO_PIN_10 | GPIO_PIN_11;
 	GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
@@ -32,7 +33,8 @@ void Uart3GPIOInit(void) {
 	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 }
 void Uart6GPIOInit(void) {
-	__GPIOC_CLK_ENABLE();
+	__GPIOC_CLK_ENABLE()
+	;
 	GPIO_InitTypeDef GPIO_InitStruct;
 	GPIO_InitStruct.Pin = GPIO_PIN_6 | GPIO_PIN_7;
 	GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
@@ -68,10 +70,11 @@ void Uart2GPIOInit(void) {
  *  @details: used in Uart3Debug_Init
  ****************************************************************/
 void Uart3DMAInit(UART_HandleTypeDef* huart) {
-	__DMA1_CLK_ENABLE();
+	__DMA1_CLK_ENABLE()
+	;
 
 	huart->hdmatx = (DMA_HandleTypeDef*) calloc(1, sizeof(DMA_HandleTypeDef));
-	REQUIRE(huart->hdmatx!=0);
+	REQUIRE(huart->hdmatx != 0);
 	huart->hdmatx->Instance = DMA1_Stream3;
 	huart->hdmatx->Init.Channel = DMA_CHANNEL_4;
 	huart->hdmatx->Init.Direction = DMA_MEMORY_TO_PERIPH;
@@ -92,10 +95,11 @@ void Uart3DMAInit(UART_HandleTypeDef* huart) {
 	HAL_NVIC_EnableIRQ(DMA1_Stream3_IRQn);
 }
 void Uart6DMAInit(UART_HandleTypeDef* huart) {
-	__DMA2_CLK_ENABLE();
+	__DMA2_CLK_ENABLE()
+	;
 
 	huart->hdmatx = (DMA_HandleTypeDef*) calloc(1, sizeof(DMA_HandleTypeDef));
-	REQUIRE(huart->hdmatx!=0);
+	REQUIRE(huart->hdmatx != 0);
 	huart->hdmatx->Instance = DMA2_Stream6;
 	huart->hdmatx->Init.Channel = DMA_CHANNEL_5;
 	huart->hdmatx->Init.Direction = DMA_MEMORY_TO_PERIPH;
@@ -120,7 +124,7 @@ void Uart1DMAInit(UART_HandleTypeDef* huart) {
 	;
 
 	huart->hdmatx = (DMA_HandleTypeDef*) calloc(1, sizeof(DMA_HandleTypeDef));
-	REQUIRE(huart->hdmatx!=0);
+	REQUIRE(huart->hdmatx != 0);
 	huart->hdmatx->Instance = DMA2_Stream7;
 	huart->hdmatx->Init.Channel = DMA_CHANNEL_4;
 	huart->hdmatx->Init.Direction = DMA_MEMORY_TO_PERIPH;
@@ -145,7 +149,7 @@ void Uart2DMAInit(UART_HandleTypeDef* huart) {
 	;
 
 	huart->hdmatx = (DMA_HandleTypeDef*) calloc(1, sizeof(DMA_HandleTypeDef));
-	REQUIRE(huart->hdmatx!=0);
+	REQUIRE(huart->hdmatx != 0);
 	huart->hdmatx->Instance = DMA1_Stream6;
 	huart->hdmatx->Init.Channel = DMA_CHANNEL_4;
 	huart->hdmatx->Init.Direction = DMA_MEMORY_TO_PERIPH;
@@ -166,13 +170,13 @@ void Uart2DMAInit(UART_HandleTypeDef* huart) {
 	HAL_NVIC_EnableIRQ(DMA1_Stream6_IRQn);
 }
 
-void Uart3NVICInit(UART_HandleTypeDef* huart){
-		HAL_NVIC_SetPriority(USART3_IRQn, 0, 0);
-		HAL_NVIC_EnableIRQ(USART3_IRQn);
+void Uart3NVICInit(UART_HandleTypeDef* huart) {
+	HAL_NVIC_SetPriority(USART3_IRQn, 0, 0);
+	HAL_NVIC_EnableIRQ(USART3_IRQn);
 }
-void Uart6NVICInit(UART_HandleTypeDef* huart){
-		HAL_NVIC_SetPriority(USART6_IRQn, 0, 0);
-		HAL_NVIC_EnableIRQ(USART6_IRQn);
+void Uart6NVICInit(UART_HandleTypeDef* huart) {
+	HAL_NVIC_SetPriority(USART6_IRQn, 0, 0);
+	HAL_NVIC_EnableIRQ(USART6_IRQn);
 }
 void Uart1NVICInit(UART_HandleTypeDef* huart) {
 	HAL_NVIC_SetPriority(USART1_IRQn, 0, 0);
@@ -241,19 +245,19 @@ static void MyUARTSetConfig(UART_HandleTypeDef *huart) {
 	if (huart->Init.OverSampling == UART_OVERSAMPLING_8) {
 		/*-------------------------- USART BRR Configuration ---------------------*/
 		if ((huart->Instance == USART1) || (huart->Instance == USART6)) {
-			huart->Instance->BRR = UART_DIV_SAMPLING8(HAL_RCC_GetPCLK2Freq(),
+			huart->Instance->BRR = UART_BRR_SAMPLING8(HAL_RCC_GetPCLK2Freq(),
 					huart->Init.BaudRate);
 		} else {
-			huart->Instance->BRR = UART_DIV_SAMPLING8(HAL_RCC_GetPCLK1Freq(),
+			huart->Instance->BRR = UART_BRR_SAMPLING8(HAL_RCC_GetPCLK1Freq(),
 					huart->Init.BaudRate);
 		}
 	} else {
 		/*-------------------------- USART BRR Configuration ---------------------*/
 		if ((huart->Instance == USART1) || (huart->Instance == USART6)) {
-			huart->Instance->BRR = UART_DIV_SAMPLING16(HAL_RCC_GetPCLK2Freq(),
+			huart->Instance->BRR = UART_BRR_SAMPLING16(HAL_RCC_GetPCLK2Freq(),
 					huart->Init.BaudRate);
 		} else {
-			huart->Instance->BRR = UART_DIV_SAMPLING16(HAL_RCC_GetPCLK1Freq(),
+			huart->Instance->BRR = UART_BRR_SAMPLING16(HAL_RCC_GetPCLK1Freq(),
 					huart->Init.BaudRate);
 		}
 	}
@@ -318,7 +322,8 @@ static HAL_StatusTypeDef MyHAL_UARTInit(UART_HandleTypeDef* huart) {
  *  @details: used in Uart3Debug_Init
  ****************************************************************/
 void Uart3UARTInit(UART_HandleTypeDef* huart) {
-	__USART3_CLK_ENABLE();
+	__USART3_CLK_ENABLE()
+	;
 	huart->Instance = USART3;
 	huart->Init.BaudRate = 115200;
 	huart->Init.WordLength = UART_WORDLENGTH_8B;
@@ -331,7 +336,8 @@ void Uart3UARTInit(UART_HandleTypeDef* huart) {
 	__HAL_UART_ENABLE_IT(huart, UART_IT_RXNE);
 }
 void Uart6UARTInit(UART_HandleTypeDef* huart) {
-	__USART6_CLK_ENABLE();
+	__USART6_CLK_ENABLE()
+	;
 	huart->Instance = USART6;
 	huart->Init.BaudRate = 115200;
 	huart->Init.WordLength = UART_WORDLENGTH_8B;
@@ -376,25 +382,28 @@ void Uart2UARTInit(UART_HandleTypeDef* huart) {
  *  @details: after call Uart3PortConfig, all the hardware configuration should be set up properly
  ****************************************************************/
 void Uart3PortConfig(UART_HandleTypeDef* huart) {
+	huart->Instance = USART3;
 	Uart3GPIOInit();
 	Uart3NVICInit(huart);
 	Uart3DMAInit(huart);
 	Uart3UARTInit(huart);
-	huart->Instance = USART3;
+
 }
 void Uart6PortConfig(UART_HandleTypeDef* huart) {
+	huart->Instance = USART6;
 	Uart6GPIOInit();
 	Uart6NVICInit(huart);
 	Uart6DMAInit(huart);
 	Uart6UARTInit(huart);
-	huart->Instance = USART6;
+
 }
 void Uart1PortConfig(UART_HandleTypeDef* huart) {
+	huart->Instance = USART1;
 	Uart1GPIOInit();
 	Uart1NVICInit(huart);
 	Uart1DMAInit(huart);
 	Uart1UARTInit(huart);
-	huart->Instance = USART1;
+
 }
 void Uart2PortConfig(UART_HandleTypeDef* huart) {
 	huart->Instance = USART2;

@@ -15,13 +15,6 @@ FILENUM(1);
 #define TX_BUFFER_SIZE 256
 #define RX_BUFFER_SIZE 32
 
-// static UART_HandleTypeDef* huartDebugPort;
-// static int8_t txMsgBuffer[TX_BUFFER_SIZE];
-// static int8_t rxMsgBuffer[RX_BUFFER_SIZE];
-// static RingBuffer* rxDebugDataRingBuffer;
-// static RingBuffer* txDebugDataRingBuffer;
-// static RingBuffer* txDebugLengthRingBuffer;
-
 UART_HandleTypeDef * huartDebugPort;
 int8_t txMsgBuffer[TX_BUFFER_SIZE];
 int8_t rxMsgBuffer[RX_BUFFER_SIZE];
@@ -112,7 +105,7 @@ int32_t IsUartDMAReady(UART_HandleTypeDef * huart) {
 /****************************************************************/
 /** @brief: send msg to serial
  ****************************************************************/
-int32_t UDebugPrintf(int8_t * data, ...) {
+int32_t UDebugPrintf(char * data, ...) {
 	UART_HandleTypeDef * huart = GetUartDebugPtr();
 	int32_t ret = -1;
 	va_list args;
@@ -126,7 +119,7 @@ int32_t UDebugPrintf(int8_t * data, ...) {
 		int32_t txRBuffState = CheckHasMsg();
 		if (txRBuffState == false) {
 			//todo
-			HAL_UART_Transmit_DMA(huart, (uint8_t *) txMsgBuffer, lengthOfMsg);
+			int ret = HAL_UART_Transmit_DMA(huart, (uint8_t *) txMsgBuffer, lengthOfMsg);
 			ret = 0;
 		} else if (txRBuffState == true) {
 			PushAMsgToTxRbuff(txMsgBuffer, lengthOfMsg);
@@ -139,7 +132,7 @@ int32_t UDebugPrintf(int8_t * data, ...) {
 	return ret;
 } /* UDebugPrintf */
 
-int32_t UDebugSendRaw(int8_t * data, int32_t lengthOfMsg) {
+int32_t UDebugSendRaw(char * data, int32_t lengthOfMsg) {
 	UART_HandleTypeDef * huart = GetUartDebugPtr();
 	int32_t ret = -1;
 
@@ -149,11 +142,11 @@ int32_t UDebugSendRaw(int8_t * data, int32_t lengthOfMsg) {
 			HAL_UART_Transmit_DMA(huart, (uint8_t *) data, lengthOfMsg);
 			ret = 0;
 		} else if (txRBuffState == true) {
-			PushAMsgToTxRbuff(data, lengthOfMsg);
+			PushAMsgToTxRbuff((int8_t*)data, lengthOfMsg);
 			ret = 1;
 		}
 	} else {
-		PushAMsgToTxRbuff(data, lengthOfMsg);
+		PushAMsgToTxRbuff((int8_t*)data, lengthOfMsg);
 		ret = 2;
 	}
 	return ret;
