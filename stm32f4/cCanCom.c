@@ -52,38 +52,38 @@ void CanComControllerLoop(cCANCom* me) {
 	}
 }
 void CANCom_RxCpltCallback(CAN_HandleTypeDef* me) {
-#if CANID==1
-	cCANCom* cc = GetCAN1ComPtr();
-#elif CANID==2
-	cCANCom* cc = GetCAN2ComPtr();
-#endif
-	if (cc != 0 && cc->rxDebugDataRingBuffer != 0) {
-		REQUIRE(GetNumberByteLeftOfRBuffer(cc->rxDebugDataRingBuffer) >= 0);
-		PushRingBuffer(cc->rxDebugDataRingBuffer, cc->myCANx->pRxMsg);
-	}
+//#if CANID==1
+//	cCANCom* cc = GetCAN1ComPtr();
+//#elif CANID==2
+//	cCANCom* cc = GetCAN2ComPtr();
+//#endif
+//	if (cc != 0 && cc->rxDebugDataRingBuffer != 0) {
+//		REQUIRE(GetNumberByteLeftOfRBuffer(cc->rxDebugDataRingBuffer) >= 0);
+//		PushRingBuffer(cc->rxDebugDataRingBuffer, cc->myCANx->pRxMsg);
+//	}
 }
 void CANCom_TxCpltCallback(CAN_HandleTypeDef* me) {
-#if CANID==1
-	cCANCom* cc = GetCAN1ComPtr();
-#elif CANID==2
-	cCANCom* cc = GetCAN2ComPtr();
-#endif
-	if (cc != 0 && cc->txDebugDataRingBuffer != 0) {
-		if (CheckHasAnyCANMsgInBuff(cc->txDebugDataRingBuffer)) {
-			PopRingBuffer(cc->txDebugDataRingBuffer, cc->myCANx->pTxMsg);
-			HAL_StatusTypeDef ret = HAL_CAN_Transmit(cc->myCANx, 5);
-			if (ret == HAL_BUSY || ret == HAL_ERROR) {
-				PushRingBuffer(cc->txDebugDataRingBuffer, cc->myCANx->pTxMsg);
-			} else if (ret == HAL_TIMEOUT || ret == HAL_ERROR) {
-				if (ret == HAL_TIMEOUT) {
-					DEBUG(LOG_ERROR, "HAL_CAN_TIMEOUT\r\n", 0);
-				} else {
-					DEBUG(LOG_ERROR, "HAL_CAN_ERROR code:%d\r\n",
-							cc->myCANx->ErrorCode);
-				}
-			}
-		}
-	}
+//#if CANID==1
+//	cCANCom* cc = GetCAN1ComPtr();
+//#elif CANID==2
+//	cCANCom* cc = GetCAN2ComPtr();
+//#endif
+//	if (cc != 0 && cc->txDebugDataRingBuffer != 0) {
+//		if (CheckHasAnyCANMsgInBuff(cc->txDebugDataRingBuffer)) {
+//			PopRingBuffer(cc->txDebugDataRingBuffer, cc->myCANx->pTxMsg);
+//			HAL_StatusTypeDef ret = HAL_CAN_Transmit(cc->myCANx, 5);
+//			if (ret == HAL_BUSY || ret == HAL_ERROR) {
+//				PushRingBuffer(cc->txDebugDataRingBuffer, cc->myCANx->pTxMsg);
+//			} else if (ret == HAL_TIMEOUT || ret == HAL_ERROR) {
+//				if (ret == HAL_TIMEOUT) {
+//					DEBUG(LOG_ERROR, "HAL_CAN_TIMEOUT\r\n", 0);
+//				} else {
+//					DEBUG(LOG_ERROR, "HAL_CAN_ERROR code:%d\r\n",
+//							cc->myCANx->ErrorCode);
+//				}
+//			}
+//		}
+//	}
 }
 
 int32_t CANComSendMsg1(cCANCom* me) {

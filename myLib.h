@@ -30,7 +30,8 @@
  * TestDeboundSwitch2		FILENUM(32);
  * cPinOut					FILENUM(33);
  * TestcPintOut				FILENUM(34);
- *
+ * MazherteqBSP				FILENUM(35);
+ * TestMazherteqBSP			FILENUM(36); 
  *
  *
  *
