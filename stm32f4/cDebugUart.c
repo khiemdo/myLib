@@ -118,8 +118,8 @@ int32_t UDebugPrintf(char * data, ...) {
 	if (IsUartDMAReady(huart)) {
 		int32_t txRBuffState = CheckHasMsg();
 		if (txRBuffState == false) {
-			//todo
-			int ret = HAL_UART_Transmit_DMA(huart, (uint8_t *) txMsgBuffer, lengthOfMsg);
+			int res = HAL_UART_Transmit_DMA(huart, (uint8_t *) txMsgBuffer, lengthOfMsg);
+			(void)res;
 			ret = 0;
 		} else if (txRBuffState == true) {
 			PushAMsgToTxRbuff(txMsgBuffer, lengthOfMsg);

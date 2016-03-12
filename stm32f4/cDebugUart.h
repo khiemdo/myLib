@@ -19,7 +19,6 @@ extern "C" {
 
 #include "main.h"
 
-#define DEBUGUART_ID 	3
 
 #if DEBUGUART_ID == 6
 	#define DEBUGUART_ADDR	USART6

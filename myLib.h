@@ -32,10 +32,5 @@
  * TestcPintOut				FILENUM(34);
  *
  *
- *
- *
- * main.c 					FILENUM(100);
- * stm32f4xx_it.c 			FILENUM(1000);
- *
  */
  
