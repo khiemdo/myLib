@@ -18,7 +18,7 @@ extern "C" {
   (byte & 0x01 ? 1 : 0)
 
 void FletcherChecksum(void);
-uint16_t crc16(int8_t * data_p, uint16_t length);
+//uint16_t crc16(int8_t * data_p, uint16_t length);
 
 #ifdef __cplusplus
 }

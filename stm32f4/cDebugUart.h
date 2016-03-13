@@ -32,8 +32,12 @@ extern "C" {
 
 void UartDebugConfig0(void);
 UART_HandleTypeDef * GetUartDebugPtr(void);
+int32_t IsDebugUartWritable();
+int32_t IsDebugUartAvailableToWrite();
 int32_t UDebugPrintf(char * data, ...);
 int32_t UDebugSendRaw(char * data, int32_t lengthOfMsg);
+int IsDebugUartAvailableToRead();
+int IsDebugUartReadable();
 int8_t ReadDebugUart(void);
 void HAL_UARTDebug_RxCpltCallback(UART_HandleTypeDef * huart);
 void HAL_UARTDebug_TxCpltCallback(UART_HandleTypeDef * huart);
