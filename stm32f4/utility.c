@@ -4,6 +4,48 @@ FILENUM(15);
 #include <stddef.h>
 #include "utility.h"
 
+void InitGPIOClockByGPIOName(GPIO_TypeDef* me) {
+	__IO uint32_t tmpreg = 0x00U;
+	if (me == GPIOA) {
+		SET_BIT(RCC->AHB1ENR, RCC_AHB1ENR_GPIOAEN);
+		/* Delay after an RCC peripheral clock enabling */
+		tmpreg = READ_BIT(RCC->AHB1ENR, RCC_AHB1ENR_GPIOAEN);
+	} else if (me == GPIOB) {
+		SET_BIT(RCC->AHB1ENR, RCC_AHB1ENR_GPIOBEN);
+		/* Delay after an RCC peripheral clock enabling */
+		tmpreg = READ_BIT(RCC->AHB1ENR, RCC_AHB1ENR_GPIOBEN);
+	} else if (me == GPIOC) {
+		SET_BIT(RCC->AHB1ENR, RCC_AHB1ENR_GPIOCEN);
+		/* Delay after an RCC peripheral clock enabling */
+		tmpreg = READ_BIT(RCC->AHB1ENR, RCC_AHB1ENR_GPIOCEN);
+	} else if (me == GPIOD) {
+		SET_BIT(RCC->AHB1ENR, RCC_AHB1ENR_GPIODEN);
+		/* Delay after an RCC peripheral clock enabling */
+		tmpreg = READ_BIT(RCC->AHB1ENR, RCC_AHB1ENR_GPIODEN);
+	} else if (me == GPIOE) {
+		SET_BIT(RCC->AHB1ENR, RCC_AHB1ENR_GPIOEEN);
+		/* Delay after an RCC peripheral clock enabling */
+		tmpreg = READ_BIT(RCC->AHB1ENR, RCC_AHB1ENR_GPIOEEN);
+	} else if (me == GPIOF) {
+		SET_BIT(RCC->AHB1ENR, RCC_AHB1ENR_GPIOFEN);
+		/* Delay after an RCC peripheral clock enabling */
+		tmpreg = READ_BIT(RCC->AHB1ENR, RCC_AHB1ENR_GPIOFEN);
+	} else if (me == GPIOG) {
+		SET_BIT(RCC->AHB1ENR, RCC_AHB1ENR_GPIOGEN);
+		/* Delay after an RCC peripheral clock enabling */
+		tmpreg = READ_BIT(RCC->AHB1ENR, RCC_AHB1ENR_GPIOGEN);
+	} else if (me == GPIOH) {
+		SET_BIT(RCC->AHB1ENR, RCC_AHB1ENR_GPIOHEN);
+		/* Delay after an RCC peripheral clock enabling */
+		tmpreg = READ_BIT(RCC->AHB1ENR, RCC_AHB1ENR_GPIOHEN);
+	} else if (me == GPIOI) {
+		SET_BIT(RCC->AHB1ENR, RCC_AHB1ENR_GPIOIEN);
+		/* Delay after an RCC peripheral clock enabling */
+		tmpreg = READ_BIT(RCC->AHB1ENR, RCC_AHB1ENR_GPIOIEN);
+	}
+	(void)(tmpreg);
+}
+
 //#define POLY 0x8408
 /*
  * //                                      16   12   5
