@@ -23,9 +23,8 @@ typedef struct RingBufferStr {
 	int32_t itemSize, bufferSize;
 } RingBuffer;
 
-RingBuffer * RingBufferConstructor(void);
 void RingBufferStructInit(RingBuffer * me);
-void RingBufferConfig(RingBuffer * me, uint32_t sizeBuffer, uint32_t sizeItem);
+void RingBufferConfig(RingBuffer* me, int8_t* buff, uint32_t numberItems, uint32_t sizeItem);
 void PushRingBuffer(RingBuffer * me, void * item);
 int32_t PopRingBuffer(RingBuffer * me, void * item);
 int32_t GetNumberItemLeftOfRBuffer(RingBuffer * me);
