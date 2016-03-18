@@ -69,11 +69,11 @@ void Uart2GPIOInit(void) {
 /** @brief: just configure DMA of uart
  *  @details: used in Uart3Debug_Init
  ****************************************************************/
-void Uart3DMAInit(UART_HandleTypeDef* huart) {
+void Uart3DMAInit(UART_HandleTypeDef* huart, DMA_HandleTypeDef* hdmatx, DMA_HandleTypeDef* hdmarx) {
 	__DMA1_CLK_ENABLE()
 	;
 
-	huart->hdmatx = (DMA_HandleTypeDef*) calloc(1, sizeof(DMA_HandleTypeDef));
+	huart->hdmatx = hdmatx;
 	REQUIRE(huart->hdmatx != 0);
 	huart->hdmatx->Instance = DMA1_Stream3;
 	huart->hdmatx->Init.Channel = DMA_CHANNEL_4;
@@ -94,11 +94,11 @@ void Uart3DMAInit(UART_HandleTypeDef* huart) {
 	HAL_NVIC_SetPriority(DMA1_Stream3_IRQn, 0, 0);
 	HAL_NVIC_EnableIRQ(DMA1_Stream3_IRQn);
 }
-void Uart6DMAInit(UART_HandleTypeDef* huart) {
+void Uart6DMAInit(UART_HandleTypeDef* huart, DMA_HandleTypeDef* hdmatx, DMA_HandleTypeDef* hdmarx) {
 	__DMA2_CLK_ENABLE()
 	;
 
-	huart->hdmatx = (DMA_HandleTypeDef*) calloc(1, sizeof(DMA_HandleTypeDef));
+	huart->hdmatx = hdmatx;
 	REQUIRE(huart->hdmatx != 0);
 	huart->hdmatx->Instance = DMA2_Stream6;
 	huart->hdmatx->Init.Channel = DMA_CHANNEL_5;
@@ -119,11 +119,11 @@ void Uart6DMAInit(UART_HandleTypeDef* huart) {
 	HAL_NVIC_SetPriority(DMA2_Stream6_IRQn, 0, 0);
 	HAL_NVIC_EnableIRQ(DMA2_Stream6_IRQn);
 }
-void Uart1DMAInit(UART_HandleTypeDef* huart) {
+void Uart1DMAInit(UART_HandleTypeDef* huart, DMA_HandleTypeDef* hdmatx, DMA_HandleTypeDef* hdmarx) {
 	__DMA2_CLK_ENABLE()
 	;
 
-	huart->hdmatx = (DMA_HandleTypeDef*) calloc(1, sizeof(DMA_HandleTypeDef));
+	huart->hdmatx = hdmatx;
 	REQUIRE(huart->hdmatx != 0);
 	huart->hdmatx->Instance = DMA2_Stream7;
 	huart->hdmatx->Init.Channel = DMA_CHANNEL_4;
@@ -144,11 +144,11 @@ void Uart1DMAInit(UART_HandleTypeDef* huart) {
 	HAL_NVIC_SetPriority(DMA2_Stream7_IRQn, 0, 0);
 	HAL_NVIC_EnableIRQ(DMA2_Stream7_IRQn);
 }
-void Uart2DMAInit(UART_HandleTypeDef* huart) {
+void Uart2DMAInit(UART_HandleTypeDef* huart, DMA_HandleTypeDef* hdmatx, DMA_HandleTypeDef* hdmarx) {
 	__DMA1_CLK_ENABLE()
 	;
 
-	huart->hdmatx = (DMA_HandleTypeDef*) calloc(1, sizeof(DMA_HandleTypeDef));
+	huart->hdmatx = hdmatx;
 	REQUIRE(huart->hdmatx != 0);
 	huart->hdmatx->Instance = DMA1_Stream6;
 	huart->hdmatx->Init.Channel = DMA_CHANNEL_4;
@@ -250,31 +250,35 @@ void Uart2UARTInit(UART_HandleTypeDef* huart) {
 /** @brief: call dma,gpio,uart config
  *  @details: after call Uart3PortConfig, all the hardware configuration should be set up properly
  ****************************************************************/
-void Uart3PortConfig(UART_HandleTypeDef* huart) {
+void Uart3PortConfig(UART_HandleTypeDef* huart, DMA_HandleTypeDef* hdmatx,
+		DMA_HandleTypeDef* hdmarx) {
 	huart->Instance = USART3;
 	Uart3GPIOInit();
 	Uart3NVICInit(huart);
-	Uart3DMAInit(huart);
+	Uart3DMAInit(huart,hdmatx,hdmarx);
 	Uart3UARTInit(huart);
 }
-void Uart6PortConfig(UART_HandleTypeDef* huart) {
+void Uart6PortConfig(UART_HandleTypeDef* huart, DMA_HandleTypeDef* hdmatx,
+		DMA_HandleTypeDef* hdmarx) {
 	huart->Instance = USART6;
 	Uart6GPIOInit();
 	Uart6NVICInit(huart);
-	Uart6DMAInit(huart);
+	Uart6DMAInit(huart,hdmatx,hdmarx);
 	Uart6UARTInit(huart);
 }
-void Uart1PortConfig(UART_HandleTypeDef* huart) {
+void Uart1PortConfig(UART_HandleTypeDef* huart, DMA_HandleTypeDef* hdmatx,
+		DMA_HandleTypeDef* hdmarx) {
 	huart->Instance = USART1;
 	Uart1GPIOInit();
 	Uart1NVICInit(huart);
-	Uart1DMAInit(huart);
+	Uart1DMAInit(huart,hdmatx,hdmarx);
 	Uart1UARTInit(huart);
 }
-void Uart2PortConfig(UART_HandleTypeDef* huart) {
+void Uart2PortConfig(UART_HandleTypeDef* huart, DMA_HandleTypeDef* hdmatx,
+		DMA_HandleTypeDef* hdmarx) {
 	huart->Instance = USART2;
 	Uart2GPIOInit();
 	Uart2NVICInit(huart);
-	Uart2DMAInit(huart);
+	Uart2DMAInit(huart,hdmatx,hdmarx);
 	Uart2UARTInit(huart);
 }
