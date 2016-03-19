@@ -44,7 +44,7 @@ extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f4xx_hal.h"
+#include "main.h"
 
 /* Exported constants --------------------------------------------------------*/
 /* EEPROM emulation firmware error codes */
@@ -61,7 +61,7 @@ extern "C" {
 #define VOLTAGE_RANGE        (uint8_t)VOLTAGE_RANGE_3
 
 /* EEPROM start address in Flash */
-#define EEPROM_START_ADDRESS ((uint32_t)0x08010000)  /* EEPROM emulation start address */
+
 
 /* Pages 0 and 1 base and end addresses */
 #define PAGE0_BASE_ADDRESS   ((uint32_t)(EEPROM_START_ADDRESS + 0x0000))
@@ -90,9 +90,6 @@ extern "C" {
 
 /* Page full define */
 #define PAGE_FULL            ((uint8_t)0x80)
-
-/* Variables' number */
-#define NB_OF_VAR            ((uint8_t)0x03)
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/

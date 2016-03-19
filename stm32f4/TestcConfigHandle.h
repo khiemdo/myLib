@@ -5,10 +5,8 @@ extern "C" {
 #endif
 
 void TestcConfigHandleConfig(void);
-int32_t TestcConfigHandle_offsetof(void);
-void TestcConfigHandleConfig_SaveDefaultConfigIntoEEPROM(void);
-void TestcConfigHandleConfig_GetFlashAddressOfConfigHeader(void);
-void TestcConfigHandleConfig_LoadConfigFromEEPROMByID(void);
+void TesConfigWriteAndReadDIffTypes(void);
+void TestConfigAPI(void);
 
 #ifdef __cplusplus
 }

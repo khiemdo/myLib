@@ -6,6 +6,8 @@ extern "C" {
 
 #include <stdint.h>
 
+#define N_ELEMENTS(X)           (sizeof(X)/sizeof(*(X)))
+
 #define BYTETOBINARYPATTERN "%d%d%d%d%d%d%d%d"
 #define BYTETOBINARY(byte)  \
   (byte & 0x80 ? 1 : 0), \
