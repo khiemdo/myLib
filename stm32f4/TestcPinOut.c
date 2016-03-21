@@ -21,13 +21,13 @@ void TestGPIOOUtputConfig() {
 
 }
 void TestGPIOOUtputOn(){
-	SetPatternOutputPin(&myOutput, 1, 0);
+	SetPatternOutputPin(&myOutput, 1, 0, HAL_GetTick());
 }
 void TestGPIOOUtputOff(){
-	SetPatternOutputPin(&myOutput, 1, 0);
+	SetPatternOutputPin(&myOutput, 1, 0, HAL_GetTick());
 }
 void TestGPIOOUtputBlinking(){
-	SetPatternOutputPin(&myOutput, 1000000, 1000000);
+	SetPatternOutputPin(&myOutput, 1000000, 1000000, HAL_GetTick());
 	OutputPinPatternLoop(&myOutput);
 }
 

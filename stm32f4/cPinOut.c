@@ -6,38 +6,28 @@ FILENUM(33);
 #include <stdlib.h>
 #include "cAssert.h"
 
-cPinOutStruct* PinOutConstructor() {
-	cPinOutStruct* me = calloc(1, sizeof(cPinOutStruct));
-	REQUIRE(me);
-	return me;
-}
-cPatternedPinOutStruct* PatternedPinOutConstructor() {
-	cPatternedPinOutStruct* me = calloc(1, sizeof(cPatternedPinOutStruct));
-	REQUIRE(me);
-	return me;
-}
-void PinOutInit(cPinOutStruct *me, int32_t type) {
+void PinOutInit(cPinOutStruct * const me, const int32_t type) {
 	if (type == 0) {
 		memset(me, 0, sizeof(cPinOutStruct));
 	} else if (type == 1) {
 		memset(me, 0, sizeof(cPatternedPinOutStruct));
 	}
 }
-void OffPinOut(cPinOutStruct *me) {
-	HAL_GPIO_WritePin(me->port, me->pin, 0);
+void OffPinOut(cPinOutStruct * const me) {
+	HAL_GPIO_WritePin(me->port, me->pin, GPIO_PIN_RESET);
 }
-void OnPinOut(cPinOutStruct *me) {
-	HAL_GPIO_WritePin(me->port, me->pin, 1);
+void OnPinOut(cPinOutStruct * const me) {
+	HAL_GPIO_WritePin(me->port, me->pin, GPIO_PIN_SET);
 }
-void TogglePinOut(cPinOutStruct *me){
+void TogglePinOut(cPinOutStruct * const me){
 	HAL_GPIO_TogglePin(me->port,me->pin);
 }
 void SetPinOut(cPinOutStruct *me, int setter) {
 	HAL_GPIO_WritePin(me->port, me->pin, setter);
 }
 
-void SetPatternOutputPin(cPatternedPinOutStruct *me, int32_t timeOn,
-		int32_t timeOff) {
+void SetPatternOutputPin(cPatternedPinOutStruct * const me, const int32_t timeOn,
+		const int32_t timeOff, const uint32_t lastTime) {
 	if (timeOn == -1 && timeOff == 0) {
 		OnPinOut((cPinOutStruct*) me);
 	} else if (timeOn == 0 && timeOff == -1) {
@@ -45,9 +35,9 @@ void SetPatternOutputPin(cPatternedPinOutStruct *me, int32_t timeOn,
 	}
 	me->timeToOff = timeOff;
 	me->timeToOn = timeOn;
-	me->lastTime = HAL_GetTick();
+	me->lastTime = lastTime;
 }
-void OutputPinPatternLoop(cPatternedPinOutStruct *me) {
+void OutputPinPatternLoop(cPatternedPinOutStruct * const me) {
 	if (me->timeToOff < 0 || me->timeToOn < 0) {
 		return;
 	}

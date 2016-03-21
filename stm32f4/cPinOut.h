@@ -24,17 +24,16 @@ typedef struct PatternedOutputPinStruct {
 	cPinOutStruct super;
 	int32_t timeToOn;
 	int32_t timeToOff;
-	uint32_t lastTime;//in msec
+	uint32_t lastTime; //in msec
 } cPatternedPinOutStruct;
 
-cPinOutStruct* PinOutConstructor();
-cPatternedPinOutStruct* PatternedPinOutConstructor();
-void PinOutInit(cPinOutStruct *me, int32_t type);
-void SetPinOut(cPinOutStruct *me, int setter);
-void OffPinOut(cPinOutStruct *me);
-void OnPinOut(cPinOutStruct *me);
-void TogglePinOut(cPinOutStruct *me);
-void SetPatternOutputPin(cPatternedPinOutStruct *me, int32_t timeOn, int32_t timeOff);
-void OutputPinPatternLoop(cPatternedPinOutStruct *me);
+void PinOutInit(cPinOutStruct * const me, const int32_t type);
+void SetPinOut(cPinOutStruct * const me, const int setter);
+void OffPinOut(cPinOutStruct * const me);
+void OnPinOut(cPinOutStruct *const me);
+void TogglePinOut(cPinOutStruct * const me);
+void SetPatternOutputPin(cPatternedPinOutStruct * const me,
+		const int32_t timeOn, const int32_t timeOff, const uint32_t lastTime);
+void OutputPinPatternLoop(cPatternedPinOutStruct * const me);
 
 #endif
