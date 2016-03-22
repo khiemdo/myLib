@@ -26,18 +26,21 @@ typedef struct RingBufferStr RingBuffer;
 typedef struct CANCommStr {
 	int32_t id;
 	uint32_t enableFlag;
-	volatile uint32_t failRearmCAN_FIFO0Signal, failRearmCAN_FIFO1Signal;//0=ok;1=failedSingal
+	volatile uint32_t failRearmCAN_FIFO0Signal, failRearmCAN_FIFO1Signal; //0=ok;1=failedSingal
 	RingBuffer* rxDebugDataRingBuffer;
 	RingBuffer* txDebugDataRingBuffer;
 	CAN_HandleTypeDef* myCANx;
 } cCANCom;
 
-cCANCom* CANComConstructor();
 void CANComInit(cCANCom* me);
 cCANCom* GetCAN1ComPtr(void);
 cCANCom* GetCAN2ComPtr(void);
-void CANComConfigUsingCan1(cCANCom * me);
-void CANComConfigUsingCan2(cCANCom * me);
+void CANComConfigUsingCan1(cCANCom * me, RingBuffer* rxRB, RingBuffer *txRB,
+		CAN_HandleTypeDef* canHandle, CanTxMsgTypeDef* pTxMsg,
+		CanRxMsgTypeDef* pRxMsg) ;
+void CANComConfigUsingCan2(cCANCom * me, RingBuffer* rxRB, RingBuffer *txRB,
+		CAN_HandleTypeDef* canHandle, CanTxMsgTypeDef* pTxMsg,
+		CanRxMsgTypeDef* pRxMsg) ;
 void CANCom_RxCpltCallback(CAN_HandleTypeDef* me);
 void CANCom_TxCpltCallback(CAN_HandleTypeDef* me);
 

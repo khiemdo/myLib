@@ -2,9 +2,8 @@
 FILENUM(50007);
 #include "MazherteqBSP.h"
 #include "utility.h"
-#include "cExoController.h"
 
-void PWMDriveWith1DirectionPinConfig0_MBSP(cPWMMotorDriverWith1DirectionPin* me) {
+void PWMDriveWith1DirectionPinConfig0_MBSP(cPWMMotorDriverWith1DirectionPin* me, uint32_t pwmClock, uint32_t pulses ) {
 	GPIO_TypeDef* thisGpio;
 	GPIO_InitTypeDef GPIO_InitStruct;
 	TIM_HandleTypeDef TimHandle;
@@ -60,9 +59,9 @@ void PWMDriveWith1DirectionPinConfig0_MBSP(cPWMMotorDriverWith1DirectionPin* me)
 	HAL_GPIO_WritePin(thisGpio, GPIO_InitStruct.Pin, GPIO_PIN_SET);
 
 	TimHandle.Instance = TIM5;
-	uint16_t uhPrescalerValue = (uint16_t) ((SystemCoreClock) / 21000000) - 1;
+	uint16_t uhPrescalerValue = (uint16_t) ((SystemCoreClock) / pwmClock) - 1;
 	TimHandle.Init.Prescaler = uhPrescalerValue;
-	TimHandle.Init.Period = 1000;
+	TimHandle.Init.Period = pulses;
 	TimHandle.Init.ClockDivision = 0;
 	TimHandle.Init.CounterMode = TIM_COUNTERMODE_UP;
 	TimHandle.Init.RepetitionCounter = 0;
@@ -81,7 +80,7 @@ void PWMDriveWith1DirectionPinConfig0_MBSP(cPWMMotorDriverWith1DirectionPin* me)
 	ret = HAL_TIM_PWM_Start(&TimHandle, TIM_CHANNEL_3);
 	REQUIRE(ret == HAL_OK);
 }
-void PWMDriveWith1DirectionPinConfig1_MBSP(cPWMMotorDriverWith1DirectionPin* me) {
+void PWMDriveWith1DirectionPinConfig1_MBSP(cPWMMotorDriverWith1DirectionPin* me, uint32_t pwmClock, uint32_t pulses ) {
 	GPIO_TypeDef* thisGpio;
 	GPIO_InitTypeDef GPIO_InitStruct;
 	TIM_HandleTypeDef TimHandle;
@@ -140,9 +139,9 @@ void PWMDriveWith1DirectionPinConfig1_MBSP(cPWMMotorDriverWith1DirectionPin* me)
 	HAL_GPIO_WritePin(thisGpio, GPIO_InitStruct.Pin, GPIO_PIN_SET);
 
 	TimHandle.Instance = TIM12;
-	uint16_t uhPrescalerValue = (uint16_t) ((SystemCoreClock) / 21000000) - 1;
+	uint16_t uhPrescalerValue = (uint16_t) ((SystemCoreClock) / pwmClock) - 1;
 	TimHandle.Init.Prescaler = uhPrescalerValue;
-	TimHandle.Init.Period = 1000;
+	TimHandle.Init.Period = pulses;
 	TimHandle.Init.ClockDivision = 0;
 	TimHandle.Init.CounterMode = TIM_COUNTERMODE_UP;
 	TimHandle.Init.RepetitionCounter = 0;
@@ -162,7 +161,7 @@ void PWMDriveWith1DirectionPinConfig1_MBSP(cPWMMotorDriverWith1DirectionPin* me)
 	REQUIRE(ret == HAL_OK);
 }
 
-uint32_t* P9_11_EncoderPWMOutput_MBSP() {
+uint32_t* P9_11_EncoderPWMOutput_MBSP( uint32_t pwmClock, uint32_t pulses ) {
 	GPIO_InitTypeDef GPIO_InitStruct;
 	TIM_HandleTypeDef TimHandle;
 	TIM_OC_InitTypeDef sConfig;
@@ -187,9 +186,9 @@ uint32_t* P9_11_EncoderPWMOutput_MBSP() {
 	HAL_GPIO_WritePin(thisGpio, GPIO_InitStruct.Pin, GPIO_PIN_RESET);
 
 	TimHandle.Instance = thisTimer;
-	uint16_t uhPrescalerValue = (uint16_t) ((SystemCoreClock) / PWMENCODEROUTPUT_CLOCK) - 1;
+	uint16_t uhPrescalerValue = (uint16_t) ((SystemCoreClock) / pwmClock) - 1;
 	TimHandle.Init.Prescaler = uhPrescalerValue;
-	TimHandle.Init.Period = PWMENCOUTPUT_PERIOD;
+	TimHandle.Init.Period = pulses;
 	TimHandle.Init.ClockDivision = 0;
 	TimHandle.Init.CounterMode = TIM_COUNTERMODE_UP;
 	TimHandle.Init.RepetitionCounter = 0;

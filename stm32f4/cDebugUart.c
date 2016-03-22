@@ -45,7 +45,6 @@ void UartDebugConfig0(void) {
 	TX_BUFFER_SIZE, sizeof(int8_t));
 	RingBufferConfig(&_txDebugLengthRingBuffer, buff_txDebugLengthRingBuffer,
 	TX_BUFFER_SIZE, sizeof(int8_t));
-
 #if DEBUGUART_ID == 6
 	Uart6PortConfig(huart,&hdmatx,&hdmarx);
 #elif DEBUGUART_ID == 1
@@ -95,7 +94,6 @@ void PushAMsgToTxRbuff(int8_t * buff, int32_t length) {
  ****************************************************************/
 int32_t PopAMsgFromTxBuff(int8_t * buff) {
 	int32_t length = 0;
-
 	PopRingBuffer(&_txDebugLengthRingBuffer, &length);
 	int8_t * buffPtr = buff;
 	int32_t index = length;

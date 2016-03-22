@@ -14,7 +14,6 @@ void Uart1PortConfig(UART_HandleTypeDef* huart, DMA_HandleTypeDef* hdmatx,
 		DMA_HandleTypeDef* hdmarx);
 void Uart2PortConfig(UART_HandleTypeDef* huart, DMA_HandleTypeDef* hdmatx,
 		DMA_HandleTypeDef* hdmarx);
-
 #ifdef __cplusplus
 }
 #endif

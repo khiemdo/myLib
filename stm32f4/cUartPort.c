@@ -16,7 +16,7 @@ FILENUM(11);
 #include <stdlib.h>
 #include <stdio.h>
 #include "cAssert.h"
-
+#include "string.h"
 /****************************************************************/
 /** @brief: just configure gpio of uart
  *  @details: used in Uart3Debug_Init

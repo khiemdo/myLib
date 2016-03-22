@@ -23,7 +23,6 @@ typedef struct RingBufferStr {
 	int32_t itemSize, bufferSize;
 } RingBuffer;
 
-
 void RingBufferStructInit(RingBuffer * me);
 void RingBufferConfig(RingBuffer* me, int8_t* buffer, uint32_t numberItems, uint32_t sizeItem);
 void PushRingBuffer(RingBuffer * me, void * item);
