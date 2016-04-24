@@ -6,11 +6,6 @@ FILENUM(31);
 #include "cAssert.h"
 #include "stdlib.h"
 
-cDebounceBtn* cDebounceBtnConstructor() {
-	cDebounceBtn* me = calloc(1, sizeof(cDebounceBtn));
-	REQUIRE(me);
-	return me;
-}
 void cDebounceBtnInit(cDebounceBtn *me) {
 	memset(me, 0, sizeof(cDebounceBtn));
 }

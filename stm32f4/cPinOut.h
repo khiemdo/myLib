@@ -10,6 +10,9 @@
 
 #ifndef _cGpioOutput_h
 #define _cGpioOutput_h
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include "main.h"
 
@@ -37,4 +40,8 @@ void TogglePinOut(cPinOutStruct *me);
 void SetPatternOutputPin(cPatternedPinOutStruct *me, int32_t timeOn, int32_t timeOff);
 void OutputPinPatternLoop(cPatternedPinOutStruct *me);
 
+#ifdef __cplusplus
+}
 #endif
+#endif
+

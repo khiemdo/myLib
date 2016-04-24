@@ -36,6 +36,6 @@ void TestcCanComRead(void){
 	if (!IsCANBufferEmpty(ccTest->rxDebugDataRingBuffer)) {
 		CanRxMsgTypeDef rxTest;
 		CANComReadMsg(ccTest,&rxTest);
-		UDebugPrintf((int8_t*)"%x|%u\r\n", rxTest.StdId, rxTest.DLC);
+		UDebugPrintf("%x|%u\r\n", rxTest.StdId, rxTest.DLC);
 	}
 }

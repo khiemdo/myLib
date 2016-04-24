@@ -6,14 +6,17 @@ FILENUM(26);
 #include <stdio.h>
 #include <stdlib.h>
 #include "cCanPort.h"
+#include "string.h"
 
+CAN_HandleTypeDef _testCan;
 CAN_HandleTypeDef * testCan;
 CAN_FilterConfTypeDef sFilterConfig;
 CanTxMsgTypeDef TxMessage;
 CanRxMsgTypeDef RxMessage;
 
 void TestCAN2Config(void) {
-	testCan = calloc(1, sizeof(CAN_HandleTypeDef));
+	memset(&_testCan,sizeof(CAN_HandleTypeDef),0);
+	testCan = &_testCan;
 	CAN2PortConfig(testCan);
 	CAN2PortInit(testCan);
 
@@ -24,7 +27,8 @@ void TestCAN2Config(void) {
 }
 
 void TestCAN1Config(void) {
-	testCan = calloc(1, sizeof(CAN_HandleTypeDef));
+	memset(&_testCan,sizeof(CAN_HandleTypeDef),0);
+	testCan = &_testCan;
 	CAN1PortConfig(testCan);
 	CAN1PortInit(testCan);
 

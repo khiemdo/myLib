@@ -22,6 +22,10 @@ extern "C" {
 #define LOG_INFO  2
 #define LOG_TEST  3
 
+#define ASSERT_ON_COMPILE(ex) \
+	{ uint8_t cassert_type[(ex) ? 1 : -1]; \
+	(void)cassert_type;}
+
 #if  ASSERTLV == 0
 #define REQUIRE(test_)
 #define ENSURE(test_)

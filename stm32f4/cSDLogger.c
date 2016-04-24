@@ -1,6 +1,6 @@
 #include "main.h"
 FILENUM(9);
-
+#ifdef FATFS
 #include "cSDLogger.h"
 #include "cAssert.h"
 #include "ff_gen_drv.h"
@@ -49,3 +49,4 @@ int32_t cSDLoggerDestructor(void){
     REQUIRE(ret == 0);
     return ret;
 }
+#endif
