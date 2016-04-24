@@ -38,7 +38,7 @@ void InternalStateReportSend(){
         int32_t reportLength = (int32_t)*((int8_t *)(((int32_t)myStateReport->myState) + LENGTH_INDEX));
         myStateReport->myState->starFlag = START_FLAG;
         *((int8_t *)((int32_t)(myStateReport->myState) + reportLength - 1)) = END_FLAG;
-        UDebugSendRaw((int8_t *)myStateReport->myState, reportLength);
+        UDebugSendRaw((char *)myStateReport->myState, reportLength);
         myStateReport->lastTime = currentTime;
     }
 }

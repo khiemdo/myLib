@@ -6,6 +6,8 @@ extern "C" {
 
 #include <stdint.h>
 
+#define N_ELEMENTS(X)           (sizeof(X)/sizeof(*(X)))
+
 #define BYTETOBINARYPATTERN "%d%d%d%d%d%d%d%d"
 #define BYTETOBINARY(byte)  \
   (byte & 0x80 ? 1 : 0), \
@@ -17,8 +19,9 @@ extern "C" {
   (byte & 0x02 ? 1 : 0), \
   (byte & 0x01 ? 1 : 0)
 
+void InitGPIOClockByGPIOName(GPIO_TypeDef* me);
 void FletcherChecksum(void);
-uint16_t crc16(int8_t * data_p, uint16_t length);
+//uint16_t crc16(int8_t * data_p, uint16_t length);
 
 #ifdef __cplusplus
 }

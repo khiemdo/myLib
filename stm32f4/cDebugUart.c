@@ -15,74 +15,77 @@ FILENUM(1);
 #define TX_BUFFER_SIZE 256
 #define RX_BUFFER_SIZE 32
 
-// static UART_HandleTypeDef* huartDebugPort;
-// static int8_t txMsgBuffer[TX_BUFFER_SIZE];
-// static int8_t rxMsgBuffer[RX_BUFFER_SIZE];
-// static RingBuffer* rxDebugDataRingBuffer;
-// static RingBuffer* txDebugDataRingBuffer;
-// static RingBuffer* txDebugLengthRingBuffer;
-
+UART_HandleTypeDef _huartDebugPort;
 UART_HandleTypeDef * huartDebugPort;
 int8_t txMsgBuffer[TX_BUFFER_SIZE];
 int8_t rxMsgBuffer[RX_BUFFER_SIZE];
-RingBuffer * rxDebugDataRingBuffer;
-RingBuffer * txDebugDataRingBuffer;
-RingBuffer * txDebugLengthRingBuffer;
+
+RingBuffer _rxDebugDataRingBuffer;
+RingBuffer _txDebugDataRingBuffer;
+RingBuffer _txDebugLengthRingBuffer;
+int8_t buff_rxDebugDataRingBuffer[RX_BUFFER_SIZE];
+int8_t buff_txDebugDataRingBuffer[TX_BUFFER_SIZE];
+int8_t buff_txDebugLengthRingBuffer[TX_BUFFER_SIZE];
+
+DMA_HandleTypeDef hdmatx;
+DMA_HandleTypeDef hdmarx;
+
 volatile int32_t mutex_HAL_UARTDebug_TxCpltCallback = 0;
+
 /****************************************************************/
 /** @brief: config uartDebug. here it uses uartPort3
  ****************************************************************/
 void UartDebugConfig0(void) {
-	UART_HandleTypeDef * huart = calloc(1, sizeof(UART_HandleTypeDef));
+	UART_HandleTypeDef * huart = &_huartDebugPort; //huartDebugPort must be defined as early as possible bf enable interrupt
 	REQUIRE(huart != 0);
-	huartDebugPort = huart;//huartDebugPort must be defined as early as possible bf enable interrupt
 
-	rxDebugDataRingBuffer = RingBufferConstructor();
-	REQUIRE(rxDebugDataRingBuffer != 0);
-	RingBufferConfig(rxDebugDataRingBuffer, RX_BUFFER_SIZE, sizeof(int8_t));
-	txDebugDataRingBuffer = RingBufferConstructor();
-	REQUIRE(txDebugDataRingBuffer != 0);
-	RingBufferConfig(txDebugDataRingBuffer, TX_BUFFER_SIZE, sizeof(int8_t));
-	txDebugLengthRingBuffer = RingBufferConstructor();
-	REQUIRE(txDebugLengthRingBuffer != 0);
-	RingBufferConfig(txDebugLengthRingBuffer, TX_BUFFER_SIZE, sizeof(int8_t));
-
+	RingBufferConfig(&_rxDebugDataRingBuffer, buff_rxDebugDataRingBuffer,
+	RX_BUFFER_SIZE, sizeof(int8_t));
+	RingBufferConfig(&_txDebugDataRingBuffer, buff_txDebugDataRingBuffer,
+	TX_BUFFER_SIZE, sizeof(int8_t));
+	RingBufferConfig(&_txDebugLengthRingBuffer, buff_txDebugLengthRingBuffer,
+	TX_BUFFER_SIZE, sizeof(int8_t));
 #if DEBUGUART_ID == 6
-	Uart6PortConfig(huart);
+	Uart6PortConfig(huart,&hdmatx,&hdmarx);
 #elif DEBUGUART_ID == 1
-	Uart1PortConfig(huart);
+	Uart1PortConfig(huart,&hdmatx,&hdmarx);
 #elif DEBUGUART_ID == 3
-	Uart3PortConfig(huart);
+	Uart3PortConfig(huart, &hdmatx, &hdmarx);
 #elif DEBUGUART_ID == 2
-	Uart2PortConfig(huart);
+	Uart2PortConfig(huart,&hdmatx,&hdmarx);
 #endif
 	huart->pRxBuffPtr = (uint8_t *) rxMsgBuffer;
 	huart->pTxBuffPtr = (uint8_t *) txMsgBuffer;
 	HAL_UART_Receive_IT(huart, (uint8_t *) (huart->pRxBuffPtr), 1);
-
 
 }
 /****************************************************************/
 /** @brief: get the huart ptr
  ****************************************************************/
 UART_HandleTypeDef * GetUartDebugPtr(void) {
-	return huartDebugPort;
+	return &_huartDebugPort;
 }
 /****************************************************************/
 /** @brief: check inside the Ring buffer txDebugLengthRingBuffer contain any package
  ****************************************************************/
 int32_t CheckHasMsg() {
-	return GetNumberByteUsedOfRBuffer(txDebugLengthRingBuffer) > 0;
+	return GetNumberByteUsedOfRBuffer(&_txDebugLengthRingBuffer) > 0;
+}
+int32_t IsDebugUartWritable() {
+	return GetNumberByteLeftOfRBuffer(&_txDebugDataRingBuffer);
+}
+int32_t IsDebugUartAvailableToWrite() {
+	return GetNumberByteLeftOfRBuffer(&_txDebugDataRingBuffer) != 0;
 }
 /****************************************************************/
 /** @brief: save a msg into buffer using PushRingBuffer
  ****************************************************************/
 void PushAMsgToTxRbuff(int8_t * buff, int32_t length) {
-	PushRingBuffer(txDebugLengthRingBuffer, &length);
+	PushRingBuffer(&_txDebugLengthRingBuffer, &length);
 	while (length--) {
 		//if has space in ring buffer
-		REQUIRE(GetNumberByteLeftOfRBuffer(txDebugDataRingBuffer) != 0);
-		PushRingBuffer(txDebugDataRingBuffer, buff);
+		REQUIRE(GetNumberByteLeftOfRBuffer(&_txDebugDataRingBuffer) != 0);
+		PushRingBuffer(&_txDebugDataRingBuffer, buff);
 		buff++;
 	}
 }
@@ -91,12 +94,11 @@ void PushAMsgToTxRbuff(int8_t * buff, int32_t length) {
  ****************************************************************/
 int32_t PopAMsgFromTxBuff(int8_t * buff) {
 	int32_t length = 0;
-
-	PopRingBuffer(txDebugLengthRingBuffer, &length);
+	PopRingBuffer(&_txDebugLengthRingBuffer, &length);
 	int8_t * buffPtr = buff;
 	int32_t index = length;
 	while (index--) {
-		PopRingBuffer(txDebugDataRingBuffer, buffPtr);
+		PopRingBuffer(&_txDebugDataRingBuffer, buffPtr);
 		buffPtr++;
 	}
 	return length;
@@ -112,21 +114,21 @@ int32_t IsUartDMAReady(UART_HandleTypeDef * huart) {
 /****************************************************************/
 /** @brief: send msg to serial
  ****************************************************************/
-int32_t UDebugPrintf(int8_t * data, ...) {
+int32_t UDebugPrintf(char * data, ...) {
 	UART_HandleTypeDef * huart = GetUartDebugPtr();
 	int32_t ret = -1;
 	va_list args;
 
-	va_start(args, data);
-	REQUIRE(strlen((const char*)txMsgBuffer) < TX_BUFFER_SIZE);
+	va_start(args, data);REQUIRE(strlen((const char*)txMsgBuffer) < TX_BUFFER_SIZE);
 	int32_t lengthOfMsg = vsnprintf((char*) txMsgBuffer, TX_BUFFER_SIZE,
 			(const char*) data, args);
 	va_end(args);
 	if (IsUartDMAReady(huart)) {
 		int32_t txRBuffState = CheckHasMsg();
 		if (txRBuffState == false) {
-			//todo
-			HAL_UART_Transmit_DMA(huart, (uint8_t *) txMsgBuffer, lengthOfMsg);
+			int res = HAL_UART_Transmit_DMA(huart, (uint8_t *) txMsgBuffer,
+					lengthOfMsg);
+			(void) res;
 			ret = 0;
 		} else if (txRBuffState == true) {
 			PushAMsgToTxRbuff(txMsgBuffer, lengthOfMsg);
@@ -139,7 +141,7 @@ int32_t UDebugPrintf(int8_t * data, ...) {
 	return ret;
 } /* UDebugPrintf */
 
-int32_t UDebugSendRaw(int8_t * data, int32_t lengthOfMsg) {
+int32_t UDebugSendRaw(char * data, int32_t lengthOfMsg) {
 	UART_HandleTypeDef * huart = GetUartDebugPtr();
 	int32_t ret = -1;
 
@@ -149,11 +151,11 @@ int32_t UDebugSendRaw(int8_t * data, int32_t lengthOfMsg) {
 			HAL_UART_Transmit_DMA(huart, (uint8_t *) data, lengthOfMsg);
 			ret = 0;
 		} else if (txRBuffState == true) {
-			PushAMsgToTxRbuff(data, lengthOfMsg);
+			PushAMsgToTxRbuff((int8_t*) data, lengthOfMsg);
 			ret = 1;
 		}
 	} else {
-		PushAMsgToTxRbuff(data, lengthOfMsg);
+		PushAMsgToTxRbuff((int8_t*) data, lengthOfMsg);
 		ret = 2;
 	}
 	return ret;
@@ -167,7 +169,7 @@ void HAL_UARTDebug_TxCpltCallback(UART_HandleTypeDef * huart) {
 			HAL_UART_Transmit_DMA(huart, (uint8_t *) txMsgBuffer, lengthOfMsg);
 		}
 		mutex_HAL_UARTDebug_TxCpltCallback = 0;
-	}else if (mutex_HAL_UARTDebug_TxCpltCallback == 1){
+	} else if (mutex_HAL_UARTDebug_TxCpltCallback == 1) {
 		int i = 0;
 		i++;
 	}
@@ -179,18 +181,23 @@ void UARTDebug_TBuffControllerLoop(UART_HandleTypeDef * huart) {
 	}
 }
 
-int8_t ReadDebugUart(void) {
-	int8_t ret = '\0';
+int IsDebugUartAvailableToRead() {
+	return GetNumberByteUsedOfRBuffer(&_rxDebugDataRingBuffer) != 0;
+}
+int IsDebugUartReadable() {
+	return GetNumberByteUsedOfRBuffer(&_rxDebugDataRingBuffer);
+}
+int32_t ReadDebugUart(char * buff) {
+	REQUIRE(buff!=0);
+	int32_t ret = GetNumberByteUsedOfRBuffer(&_rxDebugDataRingBuffer);
 
-	int32_t counts = GetNumberByteUsedOfRBuffer(rxDebugDataRingBuffer);
-
-	if (counts != 0) {
-		PopRingBuffer(rxDebugDataRingBuffer, &ret);
+	if (ret >0) {
+		PopRingBuffer(&_rxDebugDataRingBuffer, buff);
 	}
 
 	return ret;
 }
 void HAL_UARTDebug_RxCpltCallback(UART_HandleTypeDef * huart) {
-	PushRingBuffer(rxDebugDataRingBuffer, (--(huart->pRxBuffPtr)));
+	PushRingBuffer(&_rxDebugDataRingBuffer, (--(huart->pRxBuffPtr)));
 	HAL_UART_Receive_IT(huart, (uint8_t *) (huart->pRxBuffPtr), 1);
 }

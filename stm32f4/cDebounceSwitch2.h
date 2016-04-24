@@ -34,7 +34,6 @@ typedef struct {
 	GPIO_TypeDef* port;
 } cDebounceBtn;
 
-cDebounceBtn* cDebounceBtnConstructor();
 void cDebounceBtnInit(cDebounceBtn *me);
 void cDebounceBtnLoop(cDebounceBtn *me);
 int32_t ReadDebounceBtn(cDebounceBtn *me);
