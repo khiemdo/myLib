@@ -19,7 +19,6 @@ extern "C" {
 
 #include "main.h"
 
-#define DEBUGUART_ID 	3
 
 #if DEBUGUART_ID == 6
 	#define DEBUGUART_ADDR	USART6
@@ -33,9 +32,13 @@ extern "C" {
 
 void UartDebugConfig0(void);
 UART_HandleTypeDef * GetUartDebugPtr(void);
+int32_t IsDebugUartWritable();
+int32_t IsDebugUartAvailableToWrite();
 int32_t UDebugPrintf(char * data, ...);
 int32_t UDebugSendRaw(char * data, int32_t lengthOfMsg);
-int8_t ReadDebugUart(void);
+int IsDebugUartAvailableToRead();
+int IsDebugUartReadable();
+int32_t ReadDebugUart(char * buff);
 void HAL_UARTDebug_RxCpltCallback(UART_HandleTypeDef * huart);
 void HAL_UARTDebug_TxCpltCallback(UART_HandleTypeDef * huart);
 void UARTDebug_TBuffControllerLoop(UART_HandleTypeDef * huart);
