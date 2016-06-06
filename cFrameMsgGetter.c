@@ -1,34 +1,28 @@
-#include "main.h"
-FILENUM(3);
+//#include "main.h"
+//FILENUM(3);
 
 #include "cFrameMsgGetter.h"
-#include "cDebugUart.h"
 #include "cAssert.h"
 #include <string.h>
-
-#define MSGSTRINGSIZE 10
-
-typedef enum {
-    RESET_MSGGETTER_STATE, GETTING_MSGGETTER_STATE, RETURN_MSGGETTER_STATE
-} StateCmdGetterEnum;
-
-static int8_t msgString[MSGSTRINGSIZE];
-static int32_t indexOfMsgString = 0;
-static StateCmdGetterEnum stateFrameMsgGetter;
 
 /****************************************************************/
 /** @brief:	set the msgArr to all 0
  ****************************************************************/
-void ClearFrameMsgStringBuff(){
-    memset(msgString, 0, MSGSTRINGSIZE);
-    indexOfMsgString = 0;
+void ClearFrameMsgStringBuff(cFrameMsgGetter* me) {
+	memset(me->msgString, 0, me->msgsSize);
+	me->indexOfMsgString = 0;
 }
 /****************************************************************/
 /** @brief: initialize the private attribute of the frameMsgClass
-****************************************************************/
-void FrameMsgGetterInitialize(){
-    ClearFrameMsgStringBuff();
-    stateFrameMsgGetter = RESET_MSGGETTER_STATE;
+ ****************************************************************/
+void FrameMsgGetterInitialize(cFrameMsgGetter* me, int32_t msgsSize,
+		int8_t* msgString, int8_t* outputFrame) {
+	me->msgsSize = msgsSize;
+	me->msgString = msgString;
+	me->outputFrame = outputFrame;
+	ClearFrameMsgStringBuff(me);
+	me->lastMsgLength = 0;
+	me->stateFrameMsgGetter = RESET_MSGGETTER_STATE;
 }
 /****************************************************************/
 /** @brief: extract the frame msg from the serial stream
@@ -38,45 +32,85 @@ void FrameMsgGetterInitialize(){
  *  @return: then length of the frameMsg
  *
  ****************************************************************/
-int32_t FrameMsgGetter(char inputChar, char * outputMsg){
-    static int32_t msgLength = 0;
-    int8_t ch = inputChar;
+int32_t FrameMsgGetter(cFrameMsgGetter* me, const int8_t inputChar,
+		int8_t * outputMsg) {
+	int8_t ch = inputChar;
 
-    switch (stateFrameMsgGetter) {
-        case RESET_MSGGETTER_STATE:
-            indexOfMsgString = 0;
-            msgLength = 0;
-            if (ch == '?' || ch == '!') {
-                ClearFrameMsgStringBuff();
-                msgString[indexOfMsgString] = ch;
-                indexOfMsgString++;
-                stateFrameMsgGetter = GETTING_MSGGETTER_STATE;
-            }
-            break;
+	switch (me->stateFrameMsgGetter) {
+	case RESET_MSGGETTER_STATE:
+		me->indexOfMsgString = 0;
+		if (ch == '?' || ch == '!') {
+			ClearFrameMsgStringBuff(me);
+			me->msgString[me->indexOfMsgString] = ch;
+			me->indexOfMsgString++;
+			me->stateFrameMsgGetter = GETTING_MSGGETTER_STATE;
+		}
+		break;
 
-        case GETTING_MSGGETTER_STATE:
-            if (ch != '\0') {
-                msgString[indexOfMsgString] = ch;
-                indexOfMsgString++;
-                if (ch != '\r') {
-                    DEBUG(LOG_TEST, "%c", ch);
-                } else {
-                    DEBUG(LOG_TEST, "%c", ch);
-                }
+	case GETTING_MSGGETTER_STATE:
+		if (ch != '\0') {
+			me->msgString[me->indexOfMsgString] = ch;
+			me->indexOfMsgString++;
+			if (ch != '\r') {
+				DEBUG(LOG_TEST, "%c", ch);
+			} else {
+				DEBUG(LOG_TEST, "%c", ch);
+			}
 
-                if (ch == '\r') {
-                    msgString[indexOfMsgString] = '\0';            // to replace '\r'
-                    stateFrameMsgGetter = RETURN_MSGGETTER_STATE;
-                }
-            }
-            break;
+			if (ch == '\r') {
+				me->msgString[me->indexOfMsgString] = '\0'; // to replace '\r'
+				me->stateFrameMsgGetter = RETURN_MSGGETTER_STATE;
+			}
+		}
+		break;
 
-        case RETURN_MSGGETTER_STATE:
-            memcpy(outputMsg, msgString, indexOfMsgString);
-            msgLength = indexOfMsgString;
-            stateFrameMsgGetter = RESET_MSGGETTER_STATE;
-            ClearFrameMsgStringBuff();
-            break;
-    } /* switch */
-    return msgLength;
+	case RETURN_MSGGETTER_STATE:
+		memcpy(outputMsg, me->msgString, me->indexOfMsgString);
+		me->stateFrameMsgGetter = RESET_MSGGETTER_STATE;
+		ClearFrameMsgStringBuff(me);
+		return me->indexOfMsgString;
+		break;
+	} /* switch */
+	return 0;
+} /* FrameMsgGetter */
+
+int32_t FrameMsgGetter1(cFrameMsgGetter* me, const int8_t inputChar) {
+	int8_t ch = inputChar;
+
+	switch (me->stateFrameMsgGetter) {
+	case RESET_MSGGETTER_STATE:
+		me->indexOfMsgString = 0;
+		if (ch == '?' || ch == '!') {
+			ClearFrameMsgStringBuff(me);
+			me->msgString[me->indexOfMsgString] = ch;
+			me->indexOfMsgString++;
+			me->stateFrameMsgGetter = GETTING_MSGGETTER_STATE;
+		}
+		break;
+
+	case GETTING_MSGGETTER_STATE:
+		if (ch != '\0') {
+			me->msgString[me->indexOfMsgString] = ch;
+			me->indexOfMsgString++;
+			if (ch != '\r') {
+				DEBUG(LOG_TEST, "%c", ch);
+			} else {
+				DEBUG(LOG_TEST, "%c", ch);
+			}
+
+			if (ch == '\r') {
+				me->msgString[me->indexOfMsgString] = '\0'; // to replace '\r'
+				me->stateFrameMsgGetter = RETURN_MSGGETTER_STATE;
+			}
+		}
+		break;
+
+	case RETURN_MSGGETTER_STATE:
+		memcpy(me->outputFrame, me->msgString, me->indexOfMsgString);
+		me->stateFrameMsgGetter = RESET_MSGGETTER_STATE;
+		ClearFrameMsgStringBuff(me);
+		return me->indexOfMsgString;
+		break;
+	} /* switch */
+	return 0;
 } /* FrameMsgGetter */

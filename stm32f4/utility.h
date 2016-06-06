@@ -6,6 +6,9 @@ extern "C" {
 
 #include <stdint.h>
 
+#define		ANGLE_DIFF(ANGLE1,ANGL2)	\
+	(180-abs(abs((ANGLE1),(ANGLE2))-180))
+	
 #define N_ELEMENTS(X)           (sizeof(X)/sizeof(*(X)))
 
 #define BYTETOBINARYPATTERN "%d%d%d%d%d%d%d%d"

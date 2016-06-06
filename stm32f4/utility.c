@@ -1,6 +1,7 @@
 #include "main.h"
 FILENUM(15);
 
+
 #include <stddef.h>
 #include "utility.h"
 
@@ -45,6 +46,9 @@ void InitGPIOClockByGPIOName(GPIO_TypeDef* me) {
 	}
 	(void)(tmpreg);
 }
+
+
+
 
 //#define POLY 0x8408
 /*

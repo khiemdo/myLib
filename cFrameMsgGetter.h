@@ -27,9 +27,24 @@ extern "C" {
 
 #include <stdint.h>
 
-void FrameMsgGetterInitialize(void);
-int32_t FrameMsgGetter(char inputChar, char * outputStrCmd);
+typedef enum {
+	RESET_MSGGETTER_STATE, GETTING_MSGGETTER_STATE, RETURN_MSGGETTER_STATE
+} StateCmdGetterEnum;
 
+typedef struct FrameMsgGetter_t {
+	int32_t msgsSize;
+	int8_t* msgString;
+	int8_t* outputFrame;
+	int32_t lastMsgLength;
+	int32_t indexOfMsgString;
+	StateCmdGetterEnum stateFrameMsgGetter;
+} cFrameMsgGetter;
+
+void FrameMsgGetterInitialize(cFrameMsgGetter* me, int32_t msgsSize,
+		int8_t* msgString, int8_t* outputFrame);
+int32_t FrameMsgGetter(cFrameMsgGetter* me, const int8_t inputChar,
+		int8_t * outputMsg);
+int32_t FrameMsgGetter1(cFrameMsgGetter* me, const int8_t inputChar);
 #ifdef __cplusplus
 }
 #endif
