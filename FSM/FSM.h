@@ -1,5 +1,8 @@
 #ifndef _FSM_h
 #define _FSM_h
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include <stdint.h>
 #include "cAssert.h"
@@ -52,9 +55,11 @@ enum ReservedSignals {
 	_USER_SIG /*!< first signal that can be used for user signals */
 };
 
-#define FSMConstructor(me_, initial_) ((me_)->state = (initial_))
+#define FSMSetup(me_, initial_) ((me_)->state = (initial_))
 
 void FSMInit(FSM *me, Event const *e);
 void FSMDispatch(FSM *me, Event const *e);
-
+#ifdef __cplusplus
+}
+#endif
 #endif
