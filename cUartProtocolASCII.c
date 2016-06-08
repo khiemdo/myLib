@@ -104,8 +104,7 @@ int32_t SerialMsgHandleController(char * msg, int32_t length) {
             SendSerialACK(EXTRACT_SERIAL_MSGID(msg), EXTRACT_SERIAL_MSGLENGTH(msg));
             break;
         case INVALID_MSG:
-            SendSerialNACK(EXTRACT_SERIAL_MSGID(msg),
-                           EXTRACT_SERIAL_MSGLENGTH(msg));
+            
             break;
             /* ------ ADD UR OWN REACTION CASES HERE	------*/
     }

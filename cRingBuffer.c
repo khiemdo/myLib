@@ -7,21 +7,17 @@ FILENUM(7);
 #include "cRingBuffer.h"
 #include "cAssert.h"
 
-RingBuffer* RingBufferConstructor(){
-	RingBuffer* me = calloc(1,sizeof(RingBuffer));
-	REQUIRE(me);
-	return me;
-}
 void RingBufferStructInit(RingBuffer* me) {
 	memset(me, 0, sizeof(RingBuffer));
 }
-void RingBufferConfig(RingBuffer* me, uint32_t numberItems, uint32_t sizeItem) {
+void RingBufferConfig(RingBuffer* me, int8_t* buffer, uint32_t numberItems, uint32_t sizeItem) {
 	REQUIRE(sizeItem!=0);
 	REQUIRE(numberItems!=0);
 	me->itemSize = sizeItem;
 	me->bufferSize = numberItems * sizeItem;
-	me->buffer = malloc((size_t) numberItems * sizeItem);
+	me->buffer = buffer;
 	REQUIRE(me->buffer!=0);
+	memset(me->buffer,me->bufferSize,0);
 }
 
 void PushRingBuffer(RingBuffer* me, void* item) {

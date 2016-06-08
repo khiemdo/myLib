@@ -44,7 +44,7 @@ void FrameMsgGetterInitialize(cFrameMsgGetter* me, int32_t msgsSize,
 		int8_t* msgString, int8_t* outputFrame);
 int32_t FrameMsgGetter(cFrameMsgGetter* me, const int8_t inputChar,
 		int8_t * outputMsg);
-
+int32_t FrameMsgGetter1(cFrameMsgGetter* me, const int8_t inputChar);
 #ifdef __cplusplus
 }
 #endif

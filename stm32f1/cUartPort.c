@@ -105,103 +105,6 @@ void Uart2NVICInit(UART_HandleTypeDef* huart) {
 	HAL_NVIC_SetPriority(USART2_IRQn, 0, 0);
 	HAL_NVIC_EnableIRQ(USART2_IRQn);
 }
-/****************************************************************/
-/** @brief: set registers acc to info in huart
- *  @details: used in HAL_UART3Debug_Init, private
- ****************************************************************/
-static void MyUARTSetConfig(UART_HandleTypeDef * huart) {
-	uint32_t tmpreg = 0x00;
-
-	/* Check the parameters */
-	assert_param(IS_UART_BAUDRATE(huart->Init.BaudRate));
-	assert_param(IS_UART_STOPBITS(huart->Init.StopBits));
-	assert_param(IS_UART_PARITY(huart->Init.Parity));
-	assert_param(IS_UART_MODE(huart->Init.Mode));
-
-	/*------- UART-associated USART registers setting : CR2 Configuration ------*/
-	/* Configure the UART Stop Bits: Set STOP[13:12] bits according
-	 * to huart->Init.StopBits value */
-	MODIFY_REG(huart->Instance->CR2, USART_CR2_STOP, huart->Init.StopBits);
-
-	/*------- UART-associated USART registers setting : CR1 Configuration ------*/
-	/* Configure the UART Word Length, Parity and mode:
-	 Set the M bits according to huart->Init.WordLength value
-	 Set PCE and PS bits according to huart->Init.Parity value
-	 Set TE and RE bits according to huart->Init.Mode value */
-	tmpreg = (uint32_t) huart->Init.WordLength | huart->Init.Parity
-			| huart->Init.Mode;
-	MODIFY_REG(huart->Instance->CR1,
-			(uint32_t)(USART_CR1_M | USART_CR1_PCE | USART_CR1_PS | USART_CR1_TE | USART_CR1_RE),
-			tmpreg);
-
-	/*------- UART-associated USART registers setting : CR3 Configuration ------*/
-	/* Configure the UART HFC: Set CTSE and RTSE bits according to huart->Init.HwFlowCtl value */
-	MODIFY_REG(huart->Instance->CR3, (USART_CR3_RTSE | USART_CR3_CTSE),
-			huart->Init.HwFlowCtl);
-
-	/*------- UART-associated USART registers setting : BRR Configuration ------*/
-	if ((huart->Instance == USART1)) {
-		huart->Instance->BRR = UART_BRR_SAMPLING16(HAL_RCC_GetPCLK2Freq(),
-				huart->Init.BaudRate);
-	} else {
-		huart->Instance->BRR = UART_BRR_SAMPLING16(HAL_RCC_GetPCLK1Freq(),
-				huart->Init.BaudRate);
-	}
-}
-
-/****************************************************************/
-/** @brief: init state flag acc to info in huart
- *  @details: used in Uart3Debug_Init, private
- ****************************************************************/
-static HAL_StatusTypeDef MyHAL_UARTInit(UART_HandleTypeDef * huart) {
-    /* Check the UART handle allocation */
-    if (huart == NULL) {
-        return HAL_ERROR;
-    }
-
-    /* Check the parameters */
-    if (huart->Init.HwFlowCtl != UART_HWCONTROL_NONE) {
-        /* The hardware flow control is available only for USART1, USART2, USART3 and USART6 */
-        assert_param(IS_UART_HWFLOW_INSTANCE(huart->Instance));
-        assert_param(IS_UART_HARDWARE_FLOW_CONTROL(huart->Init.HwFlowCtl));
-    } else {
-        assert_param(IS_UART_INSTANCE(huart->Instance));
-    }
-    assert_param(IS_UART_WORD_LENGTH(huart->Init.WordLength));
-    assert_param(IS_UART_OVERSAMPLING(huart->Init.OverSampling));
-
-    if (huart->State == HAL_UART_STATE_RESET) {
-        /* Allocate lock resource and initialize it */
-        huart->Lock = HAL_UNLOCKED;
-        /* Init the low level hardware */
-//		HAL_NVIC_SetPriority(USART3_IRQn, 0, 0);
-//		HAL_NVIC_EnableIRQ(USART3_IRQn);
-    }
-
-    huart->State = HAL_UART_STATE_BUSY;
-
-    /* Disable the peripheral */
-    __HAL_UART_DISABLE(huart);
-
-    /* Set the UART Communication parameters */
-    MyUARTSetConfig(huart);
-
-    /* In asynchronous mode, the following bits must be kept cleared:
-     * - LINEN and CLKEN bits in the USART_CR2 register,
-     * - SCEN, HDSEL and IREN  bits in the USART_CR3 register.*/
-    huart->Instance->CR2 &= ~(USART_CR2_LINEN | USART_CR2_CLKEN);
-    huart->Instance->CR3 &=
-        ~(USART_CR3_SCEN | USART_CR3_HDSEL | USART_CR3_IREN);
-
-    /* Enable the peripheral */
-    __HAL_UART_ENABLE(huart);
-
-    /* Initialize the UART state */
-    huart->ErrorCode = HAL_UART_ERROR_NONE;
-    huart->State = HAL_UART_STATE_READY;
-
-    return HAL_OK;
-} /* MyHAL_UARTInit */
 
 /****************************************************************/
 /** @brief: just to config UART registers of Uart
@@ -217,7 +120,7 @@ void Uart3UARTInit(UART_HandleTypeDef * huart) {
     huart->Init.Mode = UART_MODE_TX_RX;
     huart->Init.HwFlowCtl = UART_HWCONTROL_NONE;
     huart->Init.OverSampling = UART_OVERSAMPLING_16;
-    MyHAL_UARTInit(huart);
+    HAL_UART_Init(huart);
     __HAL_UART_ENABLE_IT(huart, UART_IT_RXNE);
 }
 
@@ -232,7 +135,7 @@ void Uart2UARTInit(UART_HandleTypeDef* huart) {
 	huart->Init.Mode = UART_MODE_TX_RX;
 	huart->Init.HwFlowCtl = UART_HWCONTROL_NONE;
 	huart->Init.OverSampling = UART_OVERSAMPLING_16;
-	MyHAL_UARTInit(huart);
+	HAL_UART_Init(huart);
 	__HAL_UART_ENABLE_IT(huart, UART_IT_RXNE);
 	__HAL_UART_ENABLE_IT(huart, UART_IT_TC);
 }

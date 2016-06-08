@@ -12,11 +12,11 @@ FILENUM(27)
 #define CANRX_BUFFER_SIZE	5
 #define CANTX_BUFFER_SIZE	5
 
+cCANCom _cc1;
+cCANCom _cc2;
 cCANCom* cc1;
 cCANCom* cc2;
-cCANCom* CANComConstructor() {
-	return calloc(1, sizeof(cCANCom));
-}
+
 void CANComInit(cCANCom* me) {
 	memset(me, 0, sizeof(cCANCom));
 }
@@ -95,7 +95,7 @@ int32_t CANComSendMsg1(cCANCom* me) {
 			if (CheckHasAnyCANMsgInBuff(me->txDebugDataRingBuffer)) {
 				REQUIRE(
 						GetNumberByteLeftOfRBuffer(me->txDebugDataRingBuffer)
-								> 0);
+						> 0);
 				PushRingBuffer(me->txDebugDataRingBuffer, me->myCANx->pTxMsg);
 				ret = 1;
 			} else {
@@ -125,7 +125,7 @@ int32_t CANComSendMsg(cCANCom* me) {
 			if (res == HAL_BUSY) {
 				REQUIRE(
 						GetNumberByteLeftOfRBuffer(me->txDebugDataRingBuffer)
-								> 0);
+						> 0);
 				PushRingBuffer(me->txDebugDataRingBuffer, me->myCANx->pTxMsg);
 				ret = 2;
 			} else if (ret == HAL_TIMEOUT || ret == HAL_ERROR) {
@@ -152,44 +152,65 @@ int32_t CANComReadMsg(cCANCom* me, CanRxMsgTypeDef* rxMsg) {
 	return ret;
 }
 
-void CANComConfigUsingCan1(cCANCom * me) {
+void CANComConfigUsingCan1(cCANCom * me, RingBuffer* rxRB, RingBuffer *txRB,
+		CAN_HandleTypeDef* canHandle, CanTxMsgTypeDef* pTxMsg,
+		CanRxMsgTypeDef* pRxMsg) {
 	cc1 = me;
 	me->id = 1;
-	me->rxDebugDataRingBuffer = RingBufferConstructor();
-	REQUIRE(me->rxDebugDataRingBuffer != 0);
-	RingBufferConfig(me->rxDebugDataRingBuffer, CANRX_BUFFER_SIZE,
-			sizeof(CanRxMsgTypeDef));
-	me->txDebugDataRingBuffer = RingBufferConstructor();
-	REQUIRE(me->txDebugDataRingBuffer != 0);
-	RingBufferConfig(me->txDebugDataRingBuffer, CANTX_BUFFER_SIZE,
-			sizeof(CanTxMsgTypeDef));
-	me->myCANx = calloc(1, sizeof(CAN_HandleTypeDef));
+	REQUIRE(rxRB);REQUIRE(txRB);
+	memset(rxRB,sizeof(RingBuffer),0);
+	memset(txRB,sizeof(RingBuffer),0);
+	me->rxDebugDataRingBuffer = rxRB;
+	//todo
+//	RingBufferConfig(me->rxDebugDataRingBuffer, CANRX_BUFFER_SIZE,
+//			sizeof(CanRxMsgTypeDef));
+	me->txDebugDataRingBuffer = txRB;
+	//todo
+//	RingBufferConfig(me->txDebugDataRingBuffer, CANTX_BUFFER_SIZE,
+//			sizeof(CanTxMsgTypeDef));
+	REQUIRE(canHandle);
+	memset(canHandle,sizeof(CAN_HandleTypeDef),0);
+	me->myCANx = canHandle;
 	CAN1PortConfig(me->myCANx);
 	CAN1PortInit(me->myCANx);
 
-	me->myCANx->pTxMsg = calloc(1, sizeof(CanTxMsgTypeDef));
-	me->myCANx->pRxMsg = calloc(1, sizeof(CanRxMsgTypeDef));
+	REQUIRE(pTxMsg);REQUIRE(pRxMsg);
+	memset(pTxMsg,sizeof(CanTxMsgTypeDef),0);
+	memset(pRxMsg,sizeof(CanRxMsgTypeDef),0);
+	me->myCANx->pTxMsg = pTxMsg;
+	me->myCANx->pRxMsg = pRxMsg;
 	CAN1FilterConfig1(me->myCANx);
 
 	me->enableFlag = 1;
 }
-void CANComConfigUsingCan2(cCANCom * me) {
+void CANComConfigUsingCan2(cCANCom * me, RingBuffer* rxRB, RingBuffer *txRB,
+		CAN_HandleTypeDef* canHandle, CanTxMsgTypeDef* pTxMsg,
+		CanRxMsgTypeDef* pRxMsg) {
 	cc2 = me;
 	me->id = 2;
-	me->rxDebugDataRingBuffer = RingBufferConstructor();
-	REQUIRE(me->rxDebugDataRingBuffer != 0);
-	RingBufferConfig(me->rxDebugDataRingBuffer, CANRX_BUFFER_SIZE,
-			sizeof(CanRxMsgTypeDef));
-	me->txDebugDataRingBuffer = RingBufferConstructor();
-	REQUIRE(me->txDebugDataRingBuffer != 0);
-	RingBufferConfig(me->txDebugDataRingBuffer, CANTX_BUFFER_SIZE,
-			sizeof(CanTxMsgTypeDef));
-	me->myCANx = calloc(1, sizeof(CAN_HandleTypeDef));
+	REQUIRE(rxRB);REQUIRE(txRB);
+	memset(rxRB,sizeof(RingBuffer),0);
+	memset(txRB,sizeof(RingBuffer),0);
+	me->rxDebugDataRingBuffer = rxRB;
+	//todo
+//	RingBufferConfig(me->rxDebugDataRingBuffer, CANRX_BUFFER_SIZE,
+//			sizeof(CanRxMsgTypeDef));
+	me->txDebugDataRingBuffer = txRB;
+	//todo
+//	RingBufferConfig(me->txDebugDataRingBuffer, CANTX_BUFFER_SIZE,
+//			sizeof(CanTxMsgTypeDef));
+
+	REQUIRE(canHandle);
+	memset(canHandle,sizeof(CAN_HandleTypeDef),0);
+	me->myCANx = canHandle;
 	CAN2PortConfig(me->myCANx);
 	CAN2PortInit(me->myCANx);
 
-	me->myCANx->pTxMsg = calloc(1, sizeof(CanTxMsgTypeDef));
-	me->myCANx->pRxMsg = calloc(1, sizeof(CanRxMsgTypeDef));
+	REQUIRE(pTxMsg);REQUIRE(pRxMsg);
+	memset(pTxMsg,sizeof(CanTxMsgTypeDef),0);
+	memset(pRxMsg,sizeof(CanRxMsgTypeDef),0);
+	me->myCANx->pTxMsg = pTxMsg;
+	me->myCANx->pRxMsg = pRxMsg;
 	CAN2FilterConfig1(me->myCANx);
 
 	//TODO: use HAL_CAN_Receive_IT, if correct plz edit CANComConfigUsingCan1 as well

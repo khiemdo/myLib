@@ -25,18 +25,23 @@
  * cCanCom					FILENUM(27);
  * TestcCanCom				FILENUM(28);
  * cCanProtocolSlifter		FILENUM(29);
- * TestcCanProtocolSlifter		FILENUM(30);
+ * TestcCanProtocolSlifter	FILENUM(30);
  * cDebounceSwitch			FILENUM(31);
  * TestDeboundSwitch2		FILENUM(32);
  * cPinOut					FILENUM(33);
  * TestcPintOut				FILENUM(34);
+<<<<<<< HEAD
  * MazherteqBSP				FILENUM(35);
  * TestMazherteqBSP			FILENUM(36); 
+=======
+ * cEncoderPort.c			FILENUM(501);
+ * cSPIAbsEnc.c				FILENUM(503);
+ * cAbsEncoder.c			FILENUM(505);
+ * TestcAbsEncoder.c		FILENUM(506);
+ * MazherteqBSP.c			FILENUM(507);
  *
+>>>>>>> abe91eb6d5ec1f6f3b1fa954ca6b47f6e5d3c882
  *
- *
- * main.c 					FILENUM(100);
- * stm32f4xx_it.c 			FILENUM(1000);
  *
  */
  

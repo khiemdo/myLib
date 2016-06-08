@@ -20,6 +20,10 @@ extern "C" {
 #define LOG_INFO  2
 #define LOG_TEST  3
 
+#define ASSERT_ON_COMPILE(ex) \
+	{ uint8_t cassert_type[(ex) ? 1 : -1]; \
+	(void)cassert_type;}
+
 #if  ASSERTLV == 0
 #define REQUIRE(test_)
 #define ENSURE(test_)
@@ -47,8 +51,8 @@ void my_assert_failed(uint8_t * file, uint32_t line, uint32_t fileIndex,
 #ifdef DEBUGON
 #define DEBUG(level, fmt, ...) \
     if (DEBUGLV >= level) { \
-        DebugLogHandle("DB:%d:", level); \
-        DebugLogHandle(fmt, __VA_ARGS__); \
+        DebugLogHandle((char*)"DB:%d:", level); \
+        DebugLogHandle((char*)fmt, __VA_ARGS__); \
     }
 void DebugLogHandle(char * msg, ...);
 #else
