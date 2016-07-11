@@ -20,7 +20,7 @@ extern "C" {
 #define LOG_ERROR 0
 #define LOG_DEBUG 1
 #define LOG_INFO  2
-#define LOG_TEST  3
+#define LOG_TEST  3//todo: add 1 leveL
 
 #define ASSERT_ON_COMPILE(ex) \
 	{ uint8_t cassert_type[(ex) ? 1 : -1]; \

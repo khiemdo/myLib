@@ -13,7 +13,7 @@ extern "C" {
 #endif
 
 #include "stm32f4xx_hal.h"
-#include "deviceConfig.hpp"
+#include "deviceConfig.h"
 
 typedef struct {
 	int32_t enableFlag;
