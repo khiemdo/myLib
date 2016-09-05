@@ -1,28 +1,3 @@
-<<<<<<< HEAD
-/****************************************************************/
-/** @file:      MazherteqBSP.c
- *  @author:	DO HOANG DUY KHIEM
- *  @date:		Mar 10, 2016
- *  @version:	1.0
- *  @brief:  bsp for mazherteq board
- *  @note:
- *
- ****************************************************************/
- #include "main.h"
-FILENUM(35);
-
-#include <stdint.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include "cAssert.h"
-#include "cDebugUart.h"
-
-
-
-
-
-
-=======
 #include "main.h"
 FILENUM(50007);
 #include "MazherteqBSP.h"
@@ -297,4 +272,4 @@ void SPI3PortConfig_MBSP(SPI_HandleTypeDef* hspi) {
 	SPI3SPIInit_MBSP(hspi, SPI_MODE_MASTER);
 
 }
->>>>>>> abe91eb6d5ec1f6f3b1fa954ca6b47f6e5d3c882
+

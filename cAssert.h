@@ -11,17 +11,12 @@
 #ifndef _cAssert_h
 #define _cAssert_h
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include "main.h"
 
 #define LOG_ERROR 0
 #define LOG_DEBUG 1
 #define LOG_INFO  2
 #define LOG_TEST  3//todo: add 1 leveL
-
 #define ASSERT_ON_COMPILE(ex) \
 	{ uint8_t cassert_type[(ex) ? 1 : -1]; \
 	(void)cassert_type;}
@@ -38,7 +33,6 @@ extern "C" {
 #define ALLEGE(test_)
 #elif ASSERTLV == 2
 #define REQUIRE(test_)         my_assert_param(test_)         // PRECONDITION#define ENSURE(test_)          my_assert_param(test_)                 // CONDITIONS MAY MEET, BUT NEED TO ENSURE#define INVARIANT(test_)       my_assert_param(test_)         // MUST BE ALWAYS TRUE#define ERROR(test_)           my_assert_param(test_)                 // IF IT HAS ANY ERROR#define ALLEGE(test_)          my_assert_param(test_)                 // THIS CASE NOT ALLOW TO HAPPEN PRACTICALLY#endif /* USE_FULL_ASSERT */
-
 #ifdef  USE_MY_ASSERT
 #define my_assert_param(expr)  ((expr) ? (void)0 : my_assert_failed((uint8_t *)__FILE__, __LINE__, 0, 0))//(int8_t *)#expr
 void my_assert_failed(uint8_t * file, uint32_t line, uint32_t fileIndex,
@@ -61,7 +55,4 @@ void DebugLogHandle(char * msg, ...);
 #define DEBUG(level, fmt, ...) ((void)0)
 #endif
 
-#ifdef __cplusplus
-}
-#endif
 #endif /* ifndef _cAssert_h */
