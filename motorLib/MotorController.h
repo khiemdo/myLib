@@ -16,6 +16,7 @@ extern "C" {
 #include "pid.h"
 #include "cAbsEncoder.h"
 #include "stdint.h"
+#include "math.h"
 
 #define SECONDSPERMINUTE	(60.0)
 typedef enum MotorModeEnum {
@@ -33,37 +34,37 @@ typedef struct cMotorData_t {
 	int32_t id;
 	int32_t motorSetStopFlag;
 
-	int32_t motorCurrentPosition;
-	float motorCurrentSpeed;
-	float motorCurrentAcceleration;
+	float_t motorCurrentPosition;
+	float_t motorCurrentSpeed;
+	float_t motorCurrentAcceleration;
 
-	int32_t motorPrevPosition;
+	float_t motorPrevPosition;
 	uint32_t lastTimeMotorDataLoop; //for calculate speed
 	uint32_t lastTimeMotorControllerLoop;
 
-	int32_t motorPositionSetpoint;
-	float motorPositionRampedSetpoint;
-	float motorVelocitySetpoint;
-	float motorVelocityRampedSetpoint;
-	float motorAccelerationSetpoint;
-	float motorAccelerationRampedSetpoint;
-	float motorIncrementalPWM; //result of the velocity PID loop
-	float motorOutputPWM; //convert to abs base
+	float_t motorPositionSetpoint;
+	float_t motorPositionRampedSetpoint;
+	float_t motorVelocitySetpoint;
+	float_t motorVelocityRampedSetpoint;
+	float_t motorAccelerationSetpoint;
+	float_t motorAccelerationRampedSetpoint;
+	float_t motorIncrementalPower; //result of the velocity PID loop
+	float_t motorPowerOutput; //convert to abs base
 
-	float motorCountsPerRev;//for incEncoder
-	float motorRampingVelocity;
-	float motorRampingAcceleration;
+	float_t motorCountsPerRev;//for incEncoder
+	float_t motorRampingVelocity;
+	float_t motorRampingAcceleration;
 
-	int32_t motorPositionDeadband;
-	float motorVelocityDeadBand;
-	float motorAccelerationDeadband;
+	float_t motorPositionDeadband;
+	float_t motorVelocityDeadBand;
+	float_t motorAccelerationDeadband;
 
 	uint32_t motorControlLoopTicks;
 	uint32_t motorDataLoopTicks;
 	uint32_t systemTimerFrequency;
 
 	float motorPositionLimit;
-	float motorPwmOutputLimit;
+	float motorPowerOutputLimit;
 } cMotorData;
 
 typedef struct cMotorController_t {

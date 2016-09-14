@@ -15,9 +15,9 @@ void Initialize_cMotorController(cMotorController* me) {
 	memset(me, 0, sizeof(cMotorController));
 }
 void CheckPointerValid_cMotorController(cMotorController* me) {
-	REQUIRE(me); REQUIRE(me->motorData); REQUIRE(me->motorEncoder); REQUIRE(me->motorPort);
+	REQUIRE(me);REQUIRE(me->motorData);REQUIRE(me->motorEncoder);REQUIRE(me->motorPort);
 	CheckPointerValid_cMotorPort(me->motorPort);
-	REQUIRE(me->motorPositionPID); REQUIRE(me->motorVelocityPID);
+	REQUIRE(me->motorPositionPID);REQUIRE(me->motorVelocityPID);
 }
 
 int IsMotorControllerEnable_cMotorController(cMotorController* me) {
@@ -94,15 +94,16 @@ void ResetMotorDataExcludeSetpoints_cMotorController(cMotorController* me1) {
 	cMotorData* me = me1->motorData;
 	me->motorVelocitySetpoint = 0;
 	me->motorVelocityRampedSetpoint = 0;
-	me->motorIncrementalPWM = 0;
-	me->motorOutputPWM = 0;
+	me->motorIncrementalPower = 0;
+	me->motorPowerOutput = 0;
 }
 void CalculateMotorSpeed_cMotorController(cMotorController* me,
 		unsigned int currentTime) {
-	int deltaCounts;
+	float_t deltaCounts;
 	cMotorData * mdata = me->motorData;
 	unsigned int deltaTicks = currentTime - mdata->lastTimeMotorDataLoop;
-	mdata->motorCurrentPosition = GetCounts_cEncoder(me->motorEncoder); //will help to update EncoderCounter as well
+	mdata->motorCurrentPosition = (float_t) GetCounts_cEncoder(
+			me->motorEncoder); //will help to update EncoderCounter as well
 	deltaCounts = mdata->motorCurrentPosition - mdata->motorPrevPosition;
 	mdata->motorPrevPosition = mdata->motorCurrentPosition;
 	//float rawSpeed = deltaCounts*encCONST/deltaTicks;
@@ -133,7 +134,7 @@ void UpdatePIDRoutine_cMotorController(cMotorController*me) {
 	cMotorData * myMotorData = me->motorData;
 	if (me->motorMode != OPENED_LOOP_VELOCITY) {
 		if (me->motorMode == CLOSED_LOOP_POSITION) {
-			myMotorData->motorCurrentPosition = GetCounts_cEncoder(
+			myMotorData->motorCurrentPosition = (float_t) GetCounts_cEncoder(
 					me->motorEncoder);
 			myMotorData->motorPositionSetpoint = LimitToRange_Utility(
 					(float) myMotorData->motorPositionSetpoint,
@@ -154,13 +155,14 @@ void UpdatePIDRoutine_cMotorController(cMotorController*me) {
 						/ myMotorData->systemTimerFrequency
 						* myMotorData->motorControlLoopTicks);
 		//PID for velocityCmd
-		myMotorData->motorIncrementalPWM = Update_cPIDStruct(
+		myMotorData->motorIncrementalPower = Update_cPIDStruct(
 				me->motorVelocityPID, myMotorData->motorVelocityRampedSetpoint,
 				myMotorData->motorCurrentSpeed);
-		myMotorData->motorOutputPWM += myMotorData->motorIncrementalPWM;
-		myMotorData->motorOutputPWM = LimitToRange_Utility(
-				myMotorData->motorOutputPWM, -myMotorData->motorPwmOutputLimit,
-				myMotorData->motorPwmOutputLimit);
+		myMotorData->motorPowerOutput += myMotorData->motorIncrementalPower;
+		myMotorData->motorPowerOutput = LimitToRange_Utility(
+				myMotorData->motorPowerOutput,
+				-myMotorData->motorPowerOutputLimit,
+				myMotorData->motorPowerOutputLimit);
 
 		//consider Stop?
 		int setStop = 0;
@@ -184,7 +186,7 @@ void UpdatePIDRoutine_cMotorController(cMotorController*me) {
 			ResetMotorDataExcludeSetpoints_cMotorController(me);
 		}
 	}
-	SetRotate_MotorPort(me->motorPort, (int) myMotorData->motorOutputPWM);
+	SetRotate_MotorPort(me->motorPort, (int) myMotorData->motorPowerOutput);
 }
 void Loop_MotorData_cMotorController(cMotorController* me) {
 	uint32_t currentTime = HAL_GetTick();
