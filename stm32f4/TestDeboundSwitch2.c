@@ -5,13 +5,13 @@ FILENUM(32)
 cDebounceBtn myBtn;
 
 void TestDeboundSwitchConfig() {
-	cDebounceBtnInit(&myBtn);
+	Initialize_cDebounceBtn(&myBtn);
 	cDebounceBtnConfig1(&myBtn);
 }
 void TestDeboundSwitchRun() {
-	cDebounceBtnLoop(&myBtn);
+	Loop_cDebounceBtn(&myBtn);
 
-	if (ReadDebounceBtn(&myBtn)) {
+	if (Read_cDebounceBtn(&myBtn)) {
 //		STM_EVAL_LEDOn(LED3);
 	} else {
 //		STM_EVAL_LEDOff(LED3);

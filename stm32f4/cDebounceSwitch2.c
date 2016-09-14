@@ -6,14 +6,14 @@ FILENUM(31);
 #include "cAssert.h"
 #include "stdlib.h"
 
-void cDebounceBtnInit(cDebounceBtn *me) {
+void Initialize_cDebounceBtn(cDebounceBtn *me) {
 	memset(me, 0, sizeof(cDebounceBtn));
 }
 
-void cDebounceBtnProcess(cDebounceBtn *me) {
+void Update_cDebounceBtn(cDebounceBtn *me) {
 	unsigned char rawState = HAL_GPIO_ReadPin(me->port, me->pin);
 
-	if(me->id==2){
+	if (me->id == 2) {
 		int i = 0;
 		i++;
 	}
@@ -30,20 +30,20 @@ void cDebounceBtnProcess(cDebounceBtn *me) {
 	else if (me->keyIntegrator >= MAXIMUM) {
 		me->keyPressed = PRESSED;
 		me->keyIntegrator = MAXIMUM; /* defensive code if integrator got corrupted */
-		DEBUG(LOG_TEST,"btnPress\r\n",0);
+		DEBUG(LOG_TEST, "btnPress\r\n", 0);
 	}
 }
 
-void cDebounceBtnLoop(cDebounceBtn *me) {
+void Loop_cDebounceBtn(cDebounceBtn *me) {
 	unsigned long tempTimer = HAL_GetTick();
 	int32_t tempTimer1 = tempTimer - me->lastTime;
-	if (tempTimer1 > CHECK_MSEC) {
-		cDebounceBtnProcess(me);
+	if (tempTimer1 > CHECK_MSEC && me != 0) {
+		Update_cDebounceBtn(me);
 		me->lastTime = tempTimer;
 	}
 }
 
-int32_t ReadDebounceBtn(cDebounceBtn *me) {
+int32_t Read_cDebounceBtn(cDebounceBtn *me) {
 	return (int32_t) me->keyPressed;
 }
 
@@ -55,8 +55,7 @@ void cDebounceBtnConfig1(cDebounceBtn *me) {
 	me->keyPressed = RELEASED;
 	me->keyIntegrator = 0;
 
-	__GPIOA_CLK_ENABLE()
-	;
+	__GPIOA_CLK_ENABLE();
 
 	/* Configure Button pin as input */
 	GPIO_InitStruct.Pin = me->pin;

@@ -20,7 +20,7 @@ float_t LimitToRange_Utility(float_t input, float_t min, float_t max) {
 	return input;
 }
 float_t Mapf_Utility(float_t value, float_t fromLow, float_t fromHigh,
-		float_t toHigh, float_t toLow) {
+		float_t toLow, float_t toHigh) {
 	return (value - fromLow) * (toHigh - toLow) / (fromHigh - fromLow) + toLow;
 }
 

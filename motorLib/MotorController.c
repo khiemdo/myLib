@@ -15,13 +15,9 @@ void Initialize_cMotorController(cMotorController* me) {
 	memset(me, 0, sizeof(cMotorController));
 }
 void CheckPointerValid_cMotorController(cMotorController* me) {
-	REQUIRE(me);
-	REQUIRE(me->motorData);
-	REQUIRE(me->motorEncoder);
-	REQUIRE(me->motorPort);
+	REQUIRE(me); REQUIRE(me->motorData); REQUIRE(me->motorEncoder); REQUIRE(me->motorPort);
 	CheckPointerValid_cMotorPort(me->motorPort);
-	REQUIRE(me->motorPositionPID);
-	REQUIRE(me->motorVelocityPID);
+	REQUIRE(me->motorPositionPID); REQUIRE(me->motorVelocityPID);
 }
 
 int IsMotorControllerEnable_cMotorController(cMotorController* me) {
@@ -110,7 +106,8 @@ void CalculateMotorSpeed_cMotorController(cMotorController* me,
 	deltaCounts = mdata->motorCurrentPosition - mdata->motorPrevPosition;
 	mdata->motorPrevPosition = mdata->motorCurrentPosition;
 	//float rawSpeed = deltaCounts*encCONST/deltaTicks;
-	float rawSpeed = (deltaCounts * SECONDSPERMINUTE * me->motorData->systemTimerFrequency * 1.0)
+	float rawSpeed = (deltaCounts * SECONDSPERMINUTE
+			* me->motorData->systemTimerFrequency * 1.0)
 			/ (mdata->motorCountsPerRev * deltaTicks);
 	mdata->motorCurrentSpeed += (0.2 * (rawSpeed - mdata->motorCurrentSpeed)); //low pass filter
 
@@ -120,18 +117,17 @@ void CalculateMotorSpeed_cMotorController(cMotorController* me,
 
 }
 
-float RampUp_cMotorController(float vSetpoint, float vRampedSetpoint,
-		float vInc) {
-	if (vSetpoint > vRampedSetpoint) {
-		vRampedSetpoint += (vInc);
-		if (vRampedSetpoint > vSetpoint)
-			vRampedSetpoint = vSetpoint;
-	} else if (vSetpoint < vRampedSetpoint) {
-		vRampedSetpoint -= (vInc);
-		if (vRampedSetpoint < vSetpoint)
-			vRampedSetpoint = vSetpoint;
+float RampUp_cMotorController(float setpoint, float rampedSetpoint, float inc) {
+	if (setpoint > rampedSetpoint) {
+		rampedSetpoint += (inc);
+		if (rampedSetpoint > setpoint)
+			rampedSetpoint = setpoint;
+	} else if (setpoint < rampedSetpoint) {
+		rampedSetpoint -= (inc);
+		if (rampedSetpoint < setpoint)
+			rampedSetpoint = setpoint;
 	}
-	return vRampedSetpoint;
+	return rampedSetpoint;
 }
 void UpdatePIDRoutine_cMotorController(cMotorController*me) {
 	cMotorData * myMotorData = me->motorData;
@@ -140,7 +136,7 @@ void UpdatePIDRoutine_cMotorController(cMotorController*me) {
 			myMotorData->motorCurrentPosition = GetCounts_cEncoder(
 					me->motorEncoder);
 			myMotorData->motorPositionSetpoint = LimitToRange_Utility(
-					myMotorData->motorPositionSetpoint,
+					(float) myMotorData->motorPositionSetpoint,
 					-myMotorData->motorPositionLimit,
 					myMotorData->motorPositionLimit);
 			myMotorData->motorPositionRampedSetpoint =
@@ -150,16 +146,12 @@ void UpdatePIDRoutine_cMotorController(cMotorController*me) {
 					(float) myMotorData->motorPositionRampedSetpoint,
 					(float) myMotorData->motorCurrentPosition);
 		}
-
-		myMotorData->motorVelocitySetpoint = LimitToRange_Utility(
-				myMotorData->motorVelocitySetpoint,
-				-myMotorData->motorVelocityLimit,
-				myMotorData->motorVelocityLimit);
 		//ramp the velocity increase
 		myMotorData->motorVelocityRampedSetpoint = RampUp_cMotorController(
 				myMotorData->motorVelocitySetpoint,
 				myMotorData->motorVelocityRampedSetpoint,
-				myMotorData->motorAccelerationLimit / myMotorData->systemTimerFrequency
+				myMotorData->motorRampingAcceleration
+						/ myMotorData->systemTimerFrequency
 						* myMotorData->motorControlLoopTicks);
 		//PID for velocityCmd
 		myMotorData->motorIncrementalPWM = Update_cPIDStruct(
@@ -167,8 +159,8 @@ void UpdatePIDRoutine_cMotorController(cMotorController*me) {
 				myMotorData->motorCurrentSpeed);
 		myMotorData->motorOutputPWM += myMotorData->motorIncrementalPWM;
 		myMotorData->motorOutputPWM = LimitToRange_Utility(
-				myMotorData->motorOutputPWM, -myMotorData->motorPwmLimit,
-				myMotorData->motorPwmLimit);
+				myMotorData->motorOutputPWM, -myMotorData->motorPwmOutputLimit,
+				myMotorData->motorPwmOutputLimit);
 
 		//consider Stop?
 		int setStop = 0;
@@ -192,7 +184,6 @@ void UpdatePIDRoutine_cMotorController(cMotorController*me) {
 			ResetMotorDataExcludeSetpoints_cMotorController(me);
 		}
 	}
-
 	SetRotate_MotorPort(me->motorPort, (int) myMotorData->motorOutputPWM);
 }
 void Loop_MotorData_cMotorController(cMotorController* me) {

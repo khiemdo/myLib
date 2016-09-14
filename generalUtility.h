@@ -23,7 +23,8 @@ void assert_failed(uint8_t* file, uint32_t line);
 void SimpleDelay_Utility(int32_t count);
 
 float_t LimitToRange_Utility(float_t input, float_t min, float_t max);
-float_t Mapf_Utility(float_t value, float_t fromLow, float_t fromHigh, float_t toHigh, float_t toLow);
+float_t Mapf_Utility(float_t value, float_t fromLow, float_t fromHigh,
+		float_t toLow, float_t toHigh);
 int16_t BitConverterToInt16_Utility(uint8_t * byte, int32_t index);
 int32_t BitConverterToInt32_Utility(uint8_t * byte, int32_t index);
 float_t BitConverterToFloat_Utility(uint8_t * byte, int32_t index);

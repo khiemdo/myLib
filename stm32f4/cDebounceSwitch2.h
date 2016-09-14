@@ -13,6 +13,9 @@
 
 #ifndef cDebounceSwitch_h
 #define cDebounceSwitch_h
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include "main.h"
 
@@ -34,8 +37,12 @@ typedef struct {
 	GPIO_TypeDef* port;
 } cDebounceBtn;
 
-void cDebounceBtnInit(cDebounceBtn *me);
-void cDebounceBtnLoop(cDebounceBtn *me);
-int32_t ReadDebounceBtn(cDebounceBtn *me);
+void Initialize_cDebounceBtn(cDebounceBtn *me);
+void Loop_cDebounceBtn(cDebounceBtn *me);
+int32_t Read_cDebounceBtn(cDebounceBtn *me);
 void cDebounceBtnConfig1(cDebounceBtn *me);
+
+#ifdef __cplusplus
+}
+#endif
 #endif

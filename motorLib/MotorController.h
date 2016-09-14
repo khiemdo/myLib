@@ -29,7 +29,7 @@ typedef enum DirectionEnum {
 	FORWARD = 0, REVERSE = 1
 } DirectionEnum;
 
-typedef struct motor_data {
+typedef struct cMotorData_t {
 	int32_t id;
 	int32_t motorSetStopFlag;
 
@@ -40,31 +40,33 @@ typedef struct motor_data {
 	int32_t motorPrevPosition;
 	uint32_t lastTimeMotorDataLoop; //for calculate speed
 	uint32_t lastTimeMotorControllerLoop;
-	uint32_t motorControlLoopTicks;
-	uint32_t motorDataLoopTicks;
-	uint32_t systemTimerFrequency;
-	float motorCountsPerRev;
-	float motorPositionLimit;
-	float motorVelocityLimit;
-	float motorAccelerationLimit; //used in close loop
-	float motorPwmLimit;
+
+	int32_t motorPositionSetpoint;
+	float motorPositionRampedSetpoint;
+	float motorVelocitySetpoint;
+	float motorVelocityRampedSetpoint;
+	float motorAccelerationSetpoint;
+	float motorAccelerationRampedSetpoint;
+	float motorIncrementalPWM; //result of the velocity PID loop
+	float motorOutputPWM; //convert to abs base
+
+	float motorCountsPerRev;//for incEncoder
+	float motorRampingVelocity;
+	float motorRampingAcceleration;
 
 	int32_t motorPositionDeadband;
 	float motorVelocityDeadBand;
 	float motorAccelerationDeadband;
 
-	int32_t motorPositionSetpoint;
-	float motorPositionRampedSetpoint;
-	float motorVelocitySetpoint; //using with motorVelocityRampedSetpoint or motorAccelerationLimit to ramp the change of velocity
-	float motorVelocityRampedSetpoint; //used in open loop
-	float motorAccelerationSetpoint;
-	float motorAccelerationRampedSetpoint;
+	uint32_t motorControlLoopTicks;
+	uint32_t motorDataLoopTicks;
+	uint32_t systemTimerFrequency;
 
-	float motorIncrementalPWM; //resulted in the velocity PID loop
-	float motorOutputPWM; //convert to abs base
+	float motorPositionLimit;
+	float motorPwmOutputLimit;
 } cMotorData;
 
-typedef struct MotorController {
+typedef struct cMotorController_t {
 	int32_t id;
 	int32_t enableFlag;
 	int32_t motorMode;
@@ -112,6 +114,7 @@ void ResetMotorDataExcludeSetpoints_cMotorController(cMotorController* me1);
 void Loop_MotorData_cMotorController(cMotorController* me);
 void Loop_MotorController_cMotorController(cMotorController* me);
 
+float RampUp_cMotorController(float setpoint, float rampedSetpoint, float inc);
 #ifdef __cplusplus
 }
 #endif
