@@ -50,8 +50,9 @@ typedef struct cMotorData_t {
 	float_t motorAccelerationRampedSetpoint;
 	float_t motorIncrementalPower; //result of the velocity PID loop
 	float_t motorPowerOutput; //convert to abs base
+	float_t realPowerOutput;
 
-	float_t motorCountsPerRev;//for incEncoder
+	float_t motorCountsPerRev; //for incEncoder
 	float_t motorRampingVelocity;
 	float_t motorRampingAcceleration;
 
