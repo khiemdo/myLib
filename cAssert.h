@@ -12,6 +12,7 @@
 #define _cAssert_h
 
 #include "main.h"
+#include "stdint.h"
 
 #define LOG_ERROR 0
 #define LOG_DEBUG 1
