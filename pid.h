@@ -16,6 +16,8 @@ extern "C" {
 
 typedef struct {
 	int32_t id;
+	int isEnable;
+	uint32_t sampleTime;
 	//pid state
 	float setPoint; // Last setpoint
 	float dState, iState;
@@ -32,13 +34,19 @@ typedef struct {
 	float Kz; //feed forward compensation
 } cPIDStruct;
 
+void SetTunings_cPIDStruct(cPIDStruct* me, float p, float i, float d);
+void SetLimits_cPIDStruct(cPIDStruct* me, float pMax, float iMax, float dMax,
+		float oMax);
+void SetSamplingTime_cPIDStruct(cPIDStruct* me, uint32_t newSampleTime) ;
+void ResetPID_cPIDStruct(cPIDStruct* me, float currentPos, float output);
+
 void Initialize_cPIDStruct(cPIDStruct* me);
 void CheckPointerValid_cPIDStruct(cPIDStruct* me);
-void PIDConfig(cPIDStruct* me, float p, float i, float d, float f, float pMax,
+void Configure_cPIDStruct(cPIDStruct* me, float p, float i, float d, float f, float pMax,
 		float iMax, float iStateMax, float dMax, float oMax, float delKp,
 		float Kz);
 float Update_cPIDStruct(cPIDStruct *pid, float setpoint, float position);
-
+float Update_cPIDStruct2(cPIDStruct *me, float setpoint, float position);
 #ifdef __cplusplus
 }
 #endif
